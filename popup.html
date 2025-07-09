@@ -2,39 +2,336 @@
 <html>
   <head>
     <style>
-      body { font-family: sans-serif; padding: 10px; }
-      .input-group { margin-bottom: 10px; }
-      .current-file { font-size: 12px; color: #666; }
-      .slider-container {
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      
+      body { 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        width: 320px;
+        background: #f5f5f5;
+        color: #333;
+      }
+      
+      .header {
+        background: #e50914;
+        color: white;
+        padding: 12px 16px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      
+      .tabs {
+        display: flex;
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+      }
+      
+      .tab {
+        flex: 1;
+        padding: 12px 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        color: #666;
+        transition: all 0.2s;
+      }
+      
+      .tab.active {
+        background: #e50914;
+        color: white;
+      }
+      
+      .tab:hover:not(.active) {
+        background: #f0f0f0;
+      }
+      
+      .tab-content {
+        padding: 16px;
+        background: white;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      
+      .tab-panel {
+        display: none;
+      }
+      
+      .tab-panel.active {
+        display: block;
+      }
+      
+      .setting-group {
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #eee;
+      }
+      
+      .setting-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+      
+      .setting-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: #333;
+      }
+      
+      .input-row {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+        margin-bottom: 8px;
       }
-      .slider {
-        flex-grow: 1;
+      
+      .color-input {
+        width: 40px;
+        height: 30px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 0;
       }
+      
+      .range-input {
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+      }
+      
+      .range-input::-webkit-slider-thumb {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #e50914;
+        cursor: pointer;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      
+      .text-input, .select-input {
+        padding: 6px 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 13px;
+        width: 80px;
+      }
+      
+      .select-input {
+        width: 120px;
+      }
+      
+      .file-input {
+        width: 100%;
+        padding: 8px;
+        border: 2px dashed #ddd;
+        border-radius: 6px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #fafafa;
+      }
+      
+      .file-input:hover {
+        border-color: #e50914;
+        background: #fff;
+      }
+      
+      .current-file {
+        font-size: 11px;
+        color: #666;
+        margin-top: 6px;
+        padding: 4px 8px;
+        background: #f0f0f0;
+        border-radius: 3px;
+        word-break: break-all;
+      }
+      
       .value-display {
-        min-width: 40px;
+        min-width: 45px;
+        font-size: 11px;
+        color: #666;
+        text-align: right;
+      }
+      
+      .position-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      
+      .position-btn {
+        padding: 8px 4px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 11px;
+        transition: all 0.2s;
+      }
+      
+      .position-btn.active {
+        background: #e50914;
+        color: white;
+        border-color: #e50914;
+      }
+      
+      .position-btn:hover:not(.active) {
+        background: #f0f0f0;
+      }
+      
+      .preview-area {
+        background: #000;
+        border-radius: 6px;
+        padding: 20px;
+        margin-top: 12px;
+        position: relative;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .preview-text {
+        color: white;
+        font-size: 16px;
+        text-align: center;
+        font-family: Arial, sans-serif;
       }
     </style>
   </head>
   <body>
-    <div class="input-group">
-      <input type="file" id="subtitleFile" accept=".srt,.vtt" />
-      <div id="currentFile" class="current-file"></div>
+    <div class="header">
+      Netflix Custom Subtitles
     </div>
-    <div class="input-group">
-      <label>Delay (ms):</label>
-      <input type="number" id="delayInput" value="0" step="100">
+    
+    <div class="tabs">
+      <button class="tab active" data-tab="files">Files</button>
+      <button class="tab" data-tab="style">Style</button>
+      <button class="tab" data-tab="position">Position</button>
     </div>
-    <div class="input-group">
-      <label>Font Size:</label>
-      <div class="slider-container">
-        <input type="range" id="fontSizeSlider" class="slider" 
-               min="12" max="72" value="32" step="2">
-        <span id="fontSizeValue" class="value-display">32px</span>
+    
+    <div class="tab-content">
+      <!-- Files Tab -->
+      <div class="tab-panel active" id="files-panel">
+        <div class="setting-group">
+          <label class="setting-label">Subtitle File</label>
+          <input type="file" id="subtitleFile" class="file-input" accept=".srt,.vtt" />
+          <div id="currentFile" class="current-file" style="display: none;"></div>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Timing Sync</label>
+          <div class="input-row">
+            <span style="font-size: 12px;">Delay:</span>
+            <input type="number" id="delayInput" class="text-input" value="0" step="100" placeholder="0">
+            <span style="font-size: 11px; color: #666;">ms</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Style Tab -->
+      <div class="tab-panel" id="style-panel">
+        <div class="setting-group">
+          <label class="setting-label">Text Appearance</label>
+          <div class="input-row">
+            <span style="font-size: 12px;">Color:</span>
+            <input type="color" id="textColor" class="color-input" value="#ffffff">
+            <span style="font-size: 12px;">Size:</span>
+            <input type="range" id="fontSizeSlider" class="range-input" min="12" max="72" value="32" step="2">
+            <span id="fontSizeValue" class="value-display">32px</span>
+          </div>
+          <div class="input-row">
+            <span style="font-size: 12px;">Font:</span>
+            <select id="fontFamily" class="select-input">
+              <option value="Arial">Arial</option>
+              <option value="Times New Roman">Times</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Georgia">Georgia</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Background</label>
+          <div class="input-row">
+            <span style="font-size: 12px;">Color:</span>
+            <input type="color" id="backgroundColor" class="color-input" value="#000000">
+            <span style="font-size: 12px;">Opacity:</span>
+            <input type="range" id="backgroundOpacity" class="range-input" min="0" max="100" value="70" step="5">
+            <span id="opacityValue" class="value-display">70%</span>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Text Effects</label>
+          <div class="input-row">
+            <span style="font-size: 12px;">Shadow:</span>
+            <input type="color" id="shadowColor" class="color-input" value="#000000">
+            <span style="font-size: 12px;">Blur:</span>
+            <input type="range" id="shadowBlur" class="range-input" min="0" max="10" value="2" step="1">
+            <span id="shadowBlurValue" class="value-display">2px</span>
+          </div>
+        </div>
+        
+        <div class="preview-area">
+          <div class="preview-text" id="previewText">Sample subtitle text</div>
+        </div>
+      </div>
+      
+      <!-- Position Tab -->
+      <div class="tab-panel" id="position-panel">
+        <div class="setting-group">
+          <label class="setting-label">Screen Position</label>
+          <div class="position-grid">
+            <button class="position-btn" data-position="top-left">↖ Top Left</button>
+            <button class="position-btn" data-position="top-center">↑ Top Center</button>
+            <button class="position-btn" data-position="top-right">↗ Top Right</button>
+            <button class="position-btn" data-position="center-left">← Center Left</button>
+            <button class="position-btn" data-position="center">● Center</button>
+            <button class="position-btn" data-position="center-right">→ Center Right</button>
+            <button class="position-btn" data-position="bottom-left">↙ Bottom Left</button>
+            <button class="position-btn active" data-position="bottom-center">↓ Bottom Center</button>
+            <button class="position-btn" data-position="bottom-right">↘ Bottom Right</button>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Fine Positioning</label>
+          <div class="input-row">
+            <span style="font-size: 12px;">Vertical:</span>
+            <input type="range" id="verticalOffset" class="range-input" min="0" max="40" value="10" step="1">
+            <span id="verticalValue" class="value-display">10%</span>
+          </div>
+          <div class="input-row">
+            <span style="font-size: 12px;">Horizontal:</span>
+            <input type="range" id="horizontalOffset" class="range-input" min="0" max="40" value="0" step="1">
+            <span id="horizontalValue" class="value-display">0%</span>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Text Alignment</label>
+          <div class="position-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+            <button class="position-btn active" data-align="center" id="alignCenter">Center</button>
+            <button class="position-btn" data-align="left" id="alignLeft">Left</button>
+            <button class="position-btn" data-align="right" id="alignRight">Right</button>
+          </div>
+        </div>
       </div>
     </div>
+    
     <script src="popup.js"></script>
   </body>
 </html>

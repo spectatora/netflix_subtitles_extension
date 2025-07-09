@@ -2,7 +2,21 @@ let subtitles = [];
 let delay = 0;
 let subtitleContainer = null;
 let intervalId = null;
-let fontSize = 32;
+
+// Default styling settings - will be updated from popup
+let subtitleSettings = {
+  fontSize: 32,
+  textColor: '#ffffff',
+  backgroundColor: '#000000',
+  backgroundOpacity: 70,
+  fontFamily: 'Arial',
+  position: 'bottom-center',
+  verticalOffset: 10,
+  horizontalOffset: 0,
+  textAlign: 'center',
+  shadowColor: '#000000',
+  shadowBlur: 2
+};
 
 function parseSRT(srtText) {
   try {
@@ -69,38 +83,179 @@ function displaySubtitles(video) {
 
 function createSubtitleContainer() {
   const container = document.createElement('div');
-  container.style.position = 'absolute';
-  container.style.left = '0';
-  container.style.right = '0';
-  container.style.bottom = '10%';
-  container.style.width = '100%';
-  container.style.textAlign = 'center';
-  container.style.color = 'white';
-  container.style.fontSize = `${fontSize}px`;
-  container.style.textShadow = '2px 2px 2px black';
-  container.style.zIndex = '9999999';
-  container.style.pointerEvents = 'none';
-  container.style.fontFamily = 'Arial, sans-serif';
+  applySubtitleStyles(container);
   return container;
 }
 
+function applySubtitleStyles(container) {
+  // Base container styles
+  container.style.position = 'absolute';
+  container.style.zIndex = '9999999';
+  container.style.pointerEvents = 'none';
+  container.style.width = 'auto';
+  container.style.maxWidth = '80%';
+  container.style.wordWrap = 'break-word';
+  container.style.whiteSpace = 'pre-wrap';
+  
+  // Apply positioning
+  applyPositioning(container);
+  
+  // Apply text styles
+  applyTextStyles(container);
+}
+
+function applyPositioning(container) {
+  const { position, verticalOffset, horizontalOffset } = subtitleSettings;
+  
+  // Reset all positioning
+  container.style.top = 'auto';
+  container.style.bottom = 'auto';
+  container.style.left = 'auto';
+  container.style.right = 'auto';
+  container.style.transform = 'none';
+  
+  // Apply position-specific styles
+  switch (position) {
+    case 'top-left':
+      container.style.top = `${verticalOffset}%`;
+      container.style.left = `${horizontalOffset}%`;
+      break;
+    case 'top-center':
+      container.style.top = `${verticalOffset}%`;
+      container.style.left = '50%';
+      container.style.transform = 'translateX(-50%)';
+      break;
+    case 'top-right':
+      container.style.top = `${verticalOffset}%`;
+      container.style.right = `${horizontalOffset}%`;
+      break;
+    case 'center-left':
+      container.style.top = '50%';
+      container.style.left = `${horizontalOffset}%`;
+      container.style.transform = 'translateY(-50%)';
+      break;
+    case 'center':
+      container.style.top = '50%';
+      container.style.left = '50%';
+      container.style.transform = 'translate(-50%, -50%)';
+      break;
+    case 'center-right':
+      container.style.top = '50%';
+      container.style.right = `${horizontalOffset}%`;
+      container.style.transform = 'translateY(-50%)';
+      break;
+    case 'bottom-left':
+      container.style.bottom = `${verticalOffset}%`;
+      container.style.left = `${horizontalOffset}%`;
+      break;
+    case 'bottom-center':
+    default:
+      container.style.bottom = `${verticalOffset}%`;
+      container.style.left = '50%';
+      container.style.transform = 'translateX(-50%)';
+      break;
+    case 'bottom-right':
+      container.style.bottom = `${verticalOffset}%`;
+      container.style.right = `${horizontalOffset}%`;
+      break;
+  }
+}
+
+function applyTextStyles(container) {
+  const { 
+    fontSize, 
+    textColor, 
+    backgroundColor, 
+    backgroundOpacity,
+    fontFamily, 
+    textAlign, 
+    shadowColor, 
+    shadowBlur 
+  } = subtitleSettings;
+  
+  // Text properties
+  container.style.color = textColor;
+  container.style.fontSize = `${fontSize}px`;
+  container.style.fontFamily = fontFamily;
+  container.style.textAlign = textAlign;
+  container.style.lineHeight = '1.2';
+  container.style.fontWeight = '600';
+  
+  // Background
+  if (backgroundOpacity > 0) {
+    const bgOpacity = backgroundOpacity / 100;
+    const bgColor = hexToRgba(backgroundColor, bgOpacity);
+    container.style.backgroundColor = bgColor;
+    container.style.padding = '8px 12px';
+    container.style.borderRadius = '6px';
+    container.style.backdropFilter = 'blur(2px)';
+  } else {
+    container.style.backgroundColor = 'transparent';
+    container.style.padding = '4px';
+    container.style.borderRadius = '0';
+    container.style.backdropFilter = 'none';
+  }
+  
+  // Text shadow/outline
+  if (shadowBlur > 0) {
+    const shadowOffset = Math.max(1, shadowBlur / 2);
+    container.style.textShadow = `
+      ${shadowColor} 0px 0px ${shadowBlur}px,
+      ${shadowColor} ${shadowOffset}px ${shadowOffset}px ${shadowBlur}px,
+      ${shadowColor} -${shadowOffset}px -${shadowOffset}px ${shadowBlur}px,
+      ${shadowColor} ${shadowOffset}px -${shadowOffset}px ${shadowBlur}px,
+      ${shadowColor} -${shadowOffset}px ${shadowOffset}px ${shadowBlur}px
+    `;
+  } else {
+    container.style.textShadow = 'none';
+  }
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function updateSubtitleStyles() {
+  if (subtitleContainer) {
+    applySubtitleStyles(subtitleContainer);
+  }
+}
+
+// Message handlers
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "LOAD_SUBTITLES") {
-    console.log("Raw subtitle content:", msg.data.substring(0, 200)); // Show first 200 chars
+    console.log("Raw subtitle content:", msg.data.substring(0, 200));
     const subtitles = parseSRT(msg.data);
-    console.log("Parsed subtitles:", subtitles.slice(0, 5)); // Show first 5 entries
+    console.log("Parsed subtitles:", subtitles.slice(0, 5));
     
     const video = document.querySelector('video');
     if (video) displaySubtitles(video);
   }
+  
   if (msg.type === "SET_DELAY") {
     delay = msg.value;
   }
+  
   if (msg.type === "SET_FONT_SIZE") {
-    fontSize = msg.value;
-    if (subtitleContainer) {
-      subtitleContainer.style.fontSize = `${fontSize}px`;
-    }
+    subtitleSettings.fontSize = msg.value;
+    updateSubtitleStyles();
+  }
+  
+  if (msg.type === "UPDATE_STYLE") {
+    // Update all style-related settings
+    Object.assign(subtitleSettings, msg.settings);
+    updateSubtitleStyles();
+  }
+  
+  if (msg.type === "UPDATE_POSITION") {
+    // Update position-related settings
+    subtitleSettings.position = msg.settings.position;
+    subtitleSettings.verticalOffset = msg.settings.verticalOffset;
+    subtitleSettings.horizontalOffset = msg.settings.horizontalOffset;
+    updateSubtitleStyles();
   }
 });
 
@@ -117,5 +272,23 @@ function cleanup() {
   intervalId = null;
 }
 
-// Add listener for navigation
+// Enhanced cleanup for navigation
 window.addEventListener('beforeunload', cleanup);
+
+// Handle Netflix's SPA navigation
+let currentUrl = location.href;
+new MutationObserver(() => {
+  if (location.href !== currentUrl) {
+    currentUrl = location.href;
+    cleanup();
+  }
+}).observe(document, { subtree: true, childList: true });
+
+// Load stored settings on content script initialization
+chrome.storage.local.get([
+  'fontSize', 'textColor', 'backgroundColor', 'backgroundOpacity',
+  'fontFamily', 'position', 'verticalOffset', 'horizontalOffset',
+  'textAlign', 'shadowColor', 'shadowBlur'
+], function(result) {
+  Object.assign(subtitleSettings, result);
+});
