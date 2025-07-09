@@ -15,7 +15,10 @@ const DEFAULT_SETTINGS = {
   filename: null,
   theme: 'light',
   currentPreset: 'custom',
-  customCSS: ''
+  customCSS: '',
+  shortcutsEnabled: true,
+  keyboardShortcuts: {},
+  loadedLanguages: []
 };
 
 // Genre presets with predefined configurations
@@ -115,6 +118,13 @@ document.addEventListener('DOMContentLoaded', function() {
   loadSettings();
   initializeEventListeners();
   updatePreview();
+  
+  // Listen for messages from content script
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === "CYCLE_PRESET" && message.source === "keyboard") {
+      cycleToNextPreset();
+    }
+  });
 });
 
 // Theme functionality
@@ -218,6 +228,10 @@ function updateUIFromSettings() {
     btn.classList.toggle('active', btn.dataset.align === currentSettings.textAlign);
   });
   
+  // Shortcuts tab
+  document.getElementById('shortcutsEnabled').checked = currentSettings.shortcutsEnabled !== false;
+  updateLoadedLanguagesList();
+  
   // Advanced tab
   document.getElementById('customCSS').value = currentSettings.customCSS || '';
 }
@@ -264,6 +278,11 @@ function initializeEventListeners() {
     btn.addEventListener('click', handleAlignmentButtonClick);
   });
   
+  // Shortcuts tab listeners
+  document.getElementById('shortcutsEnabled').addEventListener('change', handleShortcutsToggle);
+  document.getElementById('showHelpBtn').addEventListener('click', handleShowHelp);
+  document.getElementById('testShortcutsBtn').addEventListener('click', handleTestShortcuts);
+  
   // Advanced tab listeners
   document.getElementById('applyCSSBtn').addEventListener('click', handleApplyCustomCSS);
   document.getElementById('exportSettings').addEventListener('click', handleExportSettings);
@@ -305,13 +324,67 @@ function updateActivePreset() {
   });
 }
 
+function cycleToNextPreset() {
+  const presetKeys = Object.keys(GENRE_PRESETS);
+  presetKeys.push('custom'); // Add custom at the end
+  
+  const currentIndex = presetKeys.indexOf(activePreset);
+  const nextIndex = (currentIndex + 1) % presetKeys.length;
+  const nextPreset = presetKeys[nextIndex];
+  
+  if (nextPreset === 'custom') {
+    activePreset = 'custom';
+    currentSettings.currentPreset = 'custom';
+    updateActivePreset();
+    saveSettings();
+  } else {
+    // Apply the preset
+    Object.assign(currentSettings, GENRE_PRESETS[nextPreset]);
+    currentSettings.currentPreset = nextPreset;
+    activePreset = nextPreset;
+    
+    updateUIFromSettings();
+    updateActivePreset();
+    updatePreview();
+    saveSettings();
+    
+    // Send to content script
+    sendMessageToContentScript({ type: "UPDATE_STYLE", settings: currentSettings });
+    sendMessageToContentScript({ type: "UPDATE_POSITION", settings: currentSettings });
+  }
+}
+
 // Event handlers
 function handleFileChange(event) {
   const file = event.target.files[0];
   if (!file) return;
 
   currentSettings.filename = file.name;
+  
+  // Add to loaded languages list
+  const languageName = file.name.replace(/\.[^/.]+$/, ""); // Remove file extension
+  
+  if (!currentSettings.loadedLanguages) {
+    currentSettings.loadedLanguages = [];
+  }
+  
+  // Check if language already exists
+  const existingIndex = currentSettings.loadedLanguages.findIndex(lang => lang.name === languageName);
+  
+  if (existingIndex === -1) {
+    currentSettings.loadedLanguages.push({
+      name: languageName,
+      filename: file.name
+    });
+    currentSettings.currentLanguageIndex = currentSettings.loadedLanguages.length - 1;
+  } else {
+    // Update existing language
+    currentSettings.loadedLanguages[existingIndex].filename = file.name;
+    currentSettings.currentLanguageIndex = existingIndex;
+  }
+  
   saveSettings();
+  updateLoadedLanguagesList();
   
   const fileElement = document.getElementById('currentFile');
   fileElement.textContent = `📁 ${file.name}`;
@@ -328,7 +401,11 @@ function handleFileChange(event) {
       content = new TextDecoder('utf-8').decode(buffer);
     }
     
-    sendMessageToContentScript({ type: "LOAD_SUBTITLES", data: content });
+    sendMessageToContentScript({ 
+      type: "LOAD_SUBTITLES", 
+      data: content,
+      filename: file.name 
+    });
   };
   reader.readAsArrayBuffer(file);
 }
@@ -486,9 +563,76 @@ function handleResetSettings() {
     sendMessageToContentScript({ type: "UPDATE_STYLE", settings: currentSettings });
     sendMessageToContentScript({ type: "UPDATE_POSITION", settings: currentSettings });
     sendMessageToContentScript({ type: "APPLY_CUSTOM_CSS", css: '' });
+    sendMessageToContentScript({ type: "TOGGLE_SHORTCUTS", enabled: true });
     
     alert('All settings have been reset to default!');
   }
+}
+
+// Shortcuts tab handlers
+function handleShortcutsToggle(event) {
+  const enabled = event.target.checked;
+  currentSettings.shortcutsEnabled = enabled;
+  saveSettings();
+  
+  // Send to content script
+  sendMessageToContentScript({ 
+    type: "TOGGLE_SHORTCUTS", 
+    enabled: enabled 
+  });
+}
+
+function handleShowHelp() {
+  // Send message to content script to show help overlay
+  sendMessageToContentScript({ 
+    type: "SHOW_SHORTCUTS_HELP"
+  });
+  
+  // Close popup after a delay to let user see the help
+  setTimeout(() => {
+    window.close();
+  }, 100);
+}
+
+function handleTestShortcuts() {
+  // Send a test notification to content script
+  sendMessageToContentScript({ 
+    type: "TEST_SHORTCUTS"
+  });
+  
+  // Show a brief message in popup
+  const btn = document.getElementById('testShortcutsBtn');
+  const originalText = btn.textContent;
+  btn.textContent = '✅ Test sent!';
+  btn.disabled = true;
+  
+  setTimeout(() => {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }, 2000);
+}
+
+function updateLoadedLanguagesList() {
+  const container = document.getElementById('loadedLanguagesList');
+  const languages = currentSettings.loadedLanguages || [];
+  
+  if (languages.length === 0) {
+    container.innerHTML = '<div class="no-languages"><small>No subtitle files loaded yet</small></div>';
+    return;
+  }
+  
+  let html = '';
+  languages.forEach((lang, index) => {
+    const isCurrent = index === (currentSettings.currentLanguageIndex || 0);
+    html += `
+      <div class="language-item">
+        <span class="language-name">${lang.name}</span>
+        ${isCurrent ? '<span class="language-current">ACTIVE</span>' : ''}
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
 }
 
 // Update settings from UI

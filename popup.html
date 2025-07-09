@@ -351,6 +351,112 @@
         padding-bottom: 4px;
         border-bottom: 1px solid var(--border-color);
       }
+      
+      /* Shortcuts Tab Styles */
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--text-primary);
+        gap: 8px;
+      }
+      
+      .checkbox-container input[type="checkbox"] {
+        margin: 0;
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent-color);
+        cursor: pointer;
+      }
+      
+      .shortcuts-note {
+        margin-top: 6px;
+        padding: 6px;
+        background: var(--bg-tertiary);
+        border-radius: 4px;
+        border-left: 3px solid var(--accent-color);
+      }
+      
+      .shortcuts-list {
+        background: var(--bg-tertiary);
+        border-radius: 6px;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+      }
+      
+      .shortcut-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+      
+      .shortcut-row:last-child {
+        border-bottom: none;
+      }
+      
+      .shortcut-key {
+        background: var(--input-bg);
+        color: var(--text-primary);
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid var(--border-color);
+        min-width: 70px;
+        text-align: center;
+      }
+      
+      .shortcut-desc {
+        font-size: 12px;
+        color: var(--text-secondary);
+        flex: 1;
+        margin-left: 12px;
+      }
+      
+      .loaded-languages {
+        background: var(--bg-tertiary);
+        border-radius: 6px;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        min-height: 50px;
+      }
+      
+      .no-languages {
+        text-align: center;
+        color: var(--text-muted);
+        font-style: italic;
+      }
+      
+      .language-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+      
+      .language-item:last-child {
+        border-bottom: none;
+      }
+      
+      .language-name {
+        font-size: 12px;
+        color: var(--text-primary);
+        font-weight: 500;
+      }
+      
+      .language-current {
+        background: var(--accent-color);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: 600;
+      }
     </style>
   </head>
   <body>
@@ -366,6 +472,7 @@
       <button class="tab active" data-tab="files">Files</button>
       <button class="tab" data-tab="style">Style</button>
       <button class="tab" data-tab="position">Position</button>
+      <button class="tab" data-tab="shortcuts">Shortcuts</button>
       <button class="tab" data-tab="advanced">Advanced</button>
     </div>
     
@@ -491,6 +598,82 @@
             <button class="position-btn active" data-align="center" id="alignCenter">Center</button>
             <button class="position-btn" data-align="left" id="alignLeft">Left</button>
             <button class="position-btn" data-align="right" id="alignRight">Right</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Shortcuts Tab -->
+      <div class="tab-panel" id="shortcuts-panel">
+        <div class="setting-group">
+          <div class="section-header">Enable/Disable Shortcuts</div>
+          <div class="input-row">
+            <label class="checkbox-container">
+              <input type="checkbox" id="shortcutsEnabled" checked>
+              <span class="checkmark"></span>
+              Enable keyboard shortcuts
+            </label>
+          </div>
+          <div class="shortcuts-note">
+            <small>⚠️ Disable if shortcuts conflict with other extensions</small>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <div class="section-header">Available Shortcuts</div>
+          <div class="shortcuts-list">
+            <div class="shortcut-row">
+              <span class="shortcut-key">C</span>
+              <span class="shortcut-desc">Toggle subtitles on/off</span>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-key">G</span>
+              <span class="shortcut-desc">Timing -250ms</span>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-key">H</span>
+              <span class="shortcut-desc">Timing +250ms</span>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-key">S</span>
+              <span class="shortcut-desc">Increase font size</span>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-key">Shift+S</span>
+              <span class="shortcut-desc">Decrease font size</span>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-key">V</span>
+              <span class="shortcut-desc">Switch subtitle language</span>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-key">R</span>
+              <span class="shortcut-desc">Reset timing to 0</span>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-key">P</span>
+              <span class="shortcut-desc">Cycle through presets</span>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-key">Shift+/</span>
+              <span class="shortcut-desc">Show/hide shortcuts help</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <div class="section-header">Quick Actions</div>
+          <div class="input-row">
+            <button class="apply-btn" id="showHelpBtn">📖 Show Shortcuts Help</button>
+            <button class="apply-btn" id="testShortcutsBtn">🧪 Test Shortcuts</button>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <div class="section-header">Languages</div>
+          <div id="loadedLanguagesList" class="loaded-languages">
+            <div class="no-languages">
+              <small>No subtitle files loaded yet</small>
+            </div>
           </div>
         </div>
       </div>

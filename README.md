@@ -27,12 +27,24 @@ A Chrome extension that allows you to load and display custom subtitle files (.s
 - **Fine-tuning** - Precise vertical and horizontal offset controls
 - **Text Alignment** - Left, center, or right text alignment
 
+### ⌨️ **Keyboard Shortcuts** *(NEW!)*
+- **Toggle Subtitles** - Press `C` to instantly turn subtitles on/off
+- **Timing Control** - Use `G` and `H` to adjust timing by ±250ms steps
+- **Font Size Control** - `S` and `Shift+S` to increase/decrease font size
+- **Language Switching** - Press `V` to cycle through loaded subtitle files
+- **Preset Cycling** - `P` to quickly switch between genre style presets
+- **Quick Reset** - `R` to reset timing back to 0ms
+- **Help Overlay** - `Shift+/` to display all shortcuts on screen
+- **Smart Notifications** - Visual feedback for all keyboard actions
+- **Fullscreen Support** - All shortcuts work in both normal and fullscreen modes
+
 ### ⚡ **Professional Features**
 - **Custom CSS** - Advanced styling with custom CSS support
 - **Export/Import** - Save and share your subtitle configurations
 - **Settings Reset** - One-click reset to default settings
 - **Persistent Settings** - Remembers all preferences across sessions
 - **Smart Navigation** - Handles Netflix's single-page application navigation
+- **Multi-Language Support** - Load and switch between multiple subtitle files
 
 ## 🚀 Installation
 
@@ -74,7 +86,7 @@ A Chrome extension that allows you to load and display custom subtitle files (.s
 
 ### Interface Overview
 
-The extension features a modern tabbed interface with four main sections:
+The extension features a modern tabbed interface with five main sections:
 
 #### 📁 **Files Tab**
 - **Upload Subtitles**: Select .srt files from your device
@@ -100,11 +112,45 @@ The extension features a modern tabbed interface with four main sections:
 - **Fine Positioning**: Precise vertical/horizontal offset controls
 - **Text Alignment**: Left, center, or right alignment
 
+#### ⌨️ **Shortcuts Tab** *(NEW!)*
+- **Enable/Disable**: Toggle keyboard shortcuts on/off
+- **Shortcuts Reference**: Complete list of all available shortcuts
+- **Quick Actions**: Test shortcuts and show help overlay
+- **Language Management**: View loaded subtitle files and active language
+- **Conflict Prevention**: Disable if shortcuts interfere with other extensions
+
 #### ⚙️ **Advanced Tab**
 - **Custom CSS**: Add advanced styling with custom CSS code
 - **Export Settings**: Save your configurations as JSON files
 - **Import Settings**: Load previously saved configurations
 - **Reset**: Return all settings to defaults
+
+### ⌨️ Keyboard Shortcuts Usage
+
+The extension now includes powerful keyboard shortcuts for hands-free control:
+
+#### **Core Shortcuts**
+| Key | Action | Description |
+|-----|--------|-------------|
+| `C` | Toggle subtitles | Turn subtitles on/off instantly |
+| `G` | Timing -250ms | Move subtitles backward in time |
+| `H` | Timing +250ms | Move subtitles forward in time |
+| `S` | Increase font size | Make subtitles larger (+2px) |
+| `Shift+S` | Decrease font size | Make subtitles smaller (-2px) |
+
+#### **Advanced Shortcuts**
+| Key | Action | Description |
+|-----|--------|-------------|
+| `V` | Switch language | Cycle through loaded subtitle files |
+| `R` | Reset timing | Reset timing offset back to 0ms |
+| `P` | Cycle presets | Switch between genre style presets |
+| `Shift+/` | Show help | Display shortcuts overlay on screen |
+
+#### **Pro Tips**
+- **Sync Like a Pro**: Use `G`/`H` during quiet scenes to perfectly align subtitles
+- **Quick Styling**: Press `P` to cycle through optimized genre presets
+- **Multi-Language**: Load multiple files and use `V` to switch languages
+- **Need Help?**: Press `Shift+/` to see all shortcuts overlaid on the video
 
 ### Theme Switching
 

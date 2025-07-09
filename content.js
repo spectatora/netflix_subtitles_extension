@@ -4,6 +4,29 @@ let subtitleContainer = null;
 let intervalId = null;
 let customCSS = '';
 
+// Keyboard shortcuts state variables
+let subtitlesVisible = true;
+let loadedLanguages = [];
+let currentLanguageIndex = 0;
+let timingStep = 250; // milliseconds
+let fontSizeStep = 2; // pixels
+let shortcutsEnabled = true;
+
+// Default keyboard shortcuts
+const DEFAULT_SHORTCUTS = {
+  toggleSubtitles: 'KeyC',
+  timingBackward: 'KeyG', 
+  timingForward: 'KeyH',
+  fontSizeIncrease: 'KeyS',
+  fontSizeDecrease: 'ShiftKeyS',
+  switchLanguage: 'KeyV',
+  resetTiming: 'KeyR',
+  cyclePresets: 'KeyP',
+  showHelp: 'Slash'
+};
+
+let currentShortcuts = { ...DEFAULT_SHORTCUTS };
+
 // Default styling settings - will be updated from popup
 let subtitleSettings = {
   fontSize: 32,
@@ -18,6 +41,353 @@ let subtitleSettings = {
   shadowColor: '#000000',
   shadowBlur: 2
 };
+
+// Initialize keyboard shortcuts when content script loads
+initializeKeyboardShortcuts();
+
+function initializeKeyboardShortcuts() {
+  // Load custom shortcuts from storage
+  chrome.storage.local.get(['keyboardShortcuts', 'shortcutsEnabled'], function(result) {
+    if (result.keyboardShortcuts) {
+      currentShortcuts = { ...DEFAULT_SHORTCUTS, ...result.keyboardShortcuts };
+    }
+    if (typeof result.shortcutsEnabled !== 'undefined') {
+      shortcutsEnabled = result.shortcutsEnabled;
+    }
+  });
+
+  // Add keyboard event listener
+  document.addEventListener('keydown', handleKeyboardEvent, true);
+  
+  // Prevent conflicts with Netflix shortcuts in fullscreen
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+}
+
+function handleKeyboardEvent(event) {
+  if (!shortcutsEnabled) return;
+  
+  // Don't trigger shortcuts when typing in input fields
+  if (event.target.tagName === 'INPUT' || 
+      event.target.tagName === 'TEXTAREA' || 
+      event.target.isContentEditable) {
+    return;
+  }
+
+  // Create key combination string
+  let keyCombo = '';
+  if (event.shiftKey) keyCombo += 'Shift';
+  if (event.ctrlKey) keyCombo += 'Ctrl';
+  if (event.altKey) keyCombo += 'Alt';
+  keyCombo += event.code;
+
+  // Handle keyboard shortcuts
+  switch(keyCombo) {
+    case currentShortcuts.toggleSubtitles:
+      event.preventDefault();
+      toggleSubtitleVisibility();
+      break;
+      
+    case currentShortcuts.timingBackward:
+      event.preventDefault();
+      adjustTiming(-timingStep);
+      break;
+      
+    case currentShortcuts.timingForward:
+      event.preventDefault();
+      adjustTiming(timingStep);
+      break;
+      
+    case currentShortcuts.fontSizeIncrease:
+      event.preventDefault();
+      adjustFontSize(fontSizeStep);
+      break;
+      
+    case currentShortcuts.fontSizeDecrease:
+      event.preventDefault();
+      adjustFontSize(-fontSizeStep);
+      break;
+      
+    case currentShortcuts.switchLanguage:
+      event.preventDefault();
+      switchSubtitleLanguage();
+      break;
+      
+    case currentShortcuts.resetTiming:
+      event.preventDefault();
+      resetTiming();
+      break;
+      
+    case currentShortcuts.cyclePresets:
+      event.preventDefault();
+      cyclePresets();
+      break;
+      
+    case currentShortcuts.showHelp:
+      if (event.shiftKey) { // Shift + /
+        event.preventDefault();
+        showShortcutsHelp();
+      }
+      break;
+  }
+}
+
+function toggleSubtitleVisibility() {
+  subtitlesVisible = !subtitlesVisible;
+  
+  if (subtitleContainer) {
+    subtitleContainer.style.display = subtitlesVisible ? 'block' : 'none';
+  }
+  
+  // Store state
+  chrome.storage.local.set({ subtitlesVisible: subtitlesVisible });
+  
+  // Show notification
+  showNotification(
+    subtitlesVisible ? 'Subtitles: ON' : 'Subtitles: OFF',
+    subtitlesVisible ? 'success' : 'info'
+  );
+}
+
+function adjustTiming(adjustment) {
+  delay += adjustment;
+  
+  // Store new delay
+  chrome.storage.local.set({ delay: delay });
+  
+  // Show notification
+  const sign = adjustment > 0 ? '+' : '';
+  showNotification(`Timing: ${sign}${delay}ms`, 'info');
+}
+
+function adjustFontSize(adjustment) {
+  const newSize = Math.max(12, Math.min(72, subtitleSettings.fontSize + adjustment));
+  
+  if (newSize !== subtitleSettings.fontSize) {
+    subtitleSettings.fontSize = newSize;
+    updateSubtitleStyles();
+    
+    // Store new font size
+    chrome.storage.local.set({ fontSize: newSize });
+    
+    // Show notification
+    showNotification(`Font Size: ${newSize}px`, 'info');
+  }
+}
+
+function switchSubtitleLanguage() {
+  if (loadedLanguages.length <= 1) {
+    showNotification('No additional languages loaded', 'warning');
+    return;
+  }
+  
+  currentLanguageIndex = (currentLanguageIndex + 1) % loadedLanguages.length;
+  const currentLang = loadedLanguages[currentLanguageIndex];
+  
+  // Switch to the selected language subtitles
+  subtitles = currentLang.subtitles;
+  
+  showNotification(`Language: ${currentLang.name}`, 'success');
+}
+
+function resetTiming() {
+  delay = 0;
+  chrome.storage.local.set({ delay: 0 });
+  showNotification('Timing Reset', 'success');
+}
+
+function cyclePresets() {
+  // This will be implemented when we add preset cycling
+  showNotification('Cycling presets...', 'info');
+  
+  // Send message to popup to cycle presets
+  chrome.runtime.sendMessage({ 
+    type: "CYCLE_PRESET",
+    source: "keyboard"
+  });
+}
+
+function showShortcutsHelp() {
+  if (document.getElementById('shortcuts-help-overlay')) {
+    hideShortcutsHelp();
+    return;
+  }
+  
+  const helpOverlay = document.createElement('div');
+  helpOverlay.id = 'shortcuts-help-overlay';
+  helpOverlay.innerHTML = `
+    <div class="shortcuts-help-content">
+      <h3>⌨️ Keyboard Shortcuts</h3>
+      <div class="shortcuts-list">
+        <div class="shortcut-item"><kbd>C</kbd> Toggle subtitles on/off</div>
+        <div class="shortcut-item"><kbd>G</kbd> Timing -250ms</div>
+        <div class="shortcut-item"><kbd>H</kbd> Timing +250ms</div>
+        <div class="shortcut-item"><kbd>S</kbd> Increase font size</div>
+        <div class="shortcut-item"><kbd>Shift+S</kbd> Decrease font size</div>
+        <div class="shortcut-item"><kbd>V</kbd> Switch language</div>
+        <div class="shortcut-item"><kbd>R</kbd> Reset timing</div>
+        <div class="shortcut-item"><kbd>P</kbd> Cycle presets</div>
+        <div class="shortcut-item"><kbd>Shift+/</kbd> Show/hide this help</div>
+      </div>
+      <div class="help-footer">
+        <small>Press <kbd>Shift+/</kbd> again to close</small>
+      </div>
+    </div>
+  `;
+  
+  // Apply styles
+  helpOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  `;
+  
+  const content = helpOverlay.querySelector('.shortcuts-help-content');
+  content.style.cssText = `
+    background: #1a1a1a;
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 400px;
+    border: 1px solid #333;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  `;
+  
+  const title = content.querySelector('h3');
+  title.style.cssText = `
+    margin: 0 0 20px 0;
+    text-align: center;
+    color: #e50914;
+    font-size: 18px;
+  `;
+  
+  const shortcutItems = content.querySelectorAll('.shortcut-item');
+  shortcutItems.forEach(item => {
+    item.style.cssText = `
+      margin: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    `;
+  });
+  
+  const kbds = content.querySelectorAll('kbd');
+  kbds.forEach(kbd => {
+    kbd.style.cssText = `
+      background: #333;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      border: 1px solid #555;
+      margin-right: 10px;
+    `;
+  });
+  
+  const footer = content.querySelector('.help-footer');
+  footer.style.cssText = `
+    text-align: center;
+    margin-top: 20px;
+    opacity: 0.7;
+  `;
+  
+  document.body.appendChild(helpOverlay);
+  
+  // Auto-hide after 10 seconds
+  setTimeout(() => {
+    hideShortcutsHelp();
+  }, 10000);
+}
+
+function hideShortcutsHelp() {
+  const helpOverlay = document.getElementById('shortcuts-help-overlay');
+  if (helpOverlay) {
+    helpOverlay.remove();
+  }
+}
+
+function showNotification(message, type = 'info') {
+  // Remove existing notification
+  const existingNotification = document.getElementById('subtitle-notification');
+  if (existingNotification) {
+    existingNotification.remove();
+  }
+  
+  const notification = document.createElement('div');
+  notification.id = 'subtitle-notification';
+  notification.textContent = message;
+  
+  // Base styles
+  notification.style.cssText = `
+    position: fixed;
+    top: 80px;
+    right: 30px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999998;
+    transition: all 0.3s ease;
+    transform: translateX(100%);
+    opacity: 0;
+    border-left: 4px solid #e50914;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  `;
+  
+  // Type-specific styling
+  switch(type) {
+    case 'success':
+      notification.style.borderLeftColor = '#28a745';
+      break;
+    case 'warning':
+      notification.style.borderLeftColor = '#ffc107';
+      break;
+    case 'error':
+      notification.style.borderLeftColor = '#dc3545';
+      break;
+    default:
+      notification.style.borderLeftColor = '#17a2b8';
+  }
+  
+  document.body.appendChild(notification);
+  
+  // Animate in
+  setTimeout(() => {
+    notification.style.transform = 'translateX(0)';
+    notification.style.opacity = '1';
+  }, 10);
+  
+  // Animate out and remove
+  setTimeout(() => {
+    notification.style.transform = 'translateX(100%)';
+    notification.style.opacity = '0';
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 300);
+  }, 2500);
+}
+
+function handleFullscreenChange() {
+  // Re-initialize shortcuts when entering/exiting fullscreen
+  // This ensures shortcuts work in all viewing modes
+  setTimeout(() => {
+    initializeKeyboardShortcuts();
+  }, 100);
+}
 
 function parseSRT(srtText) {
   try {
@@ -69,10 +439,18 @@ function displaySubtitles(video) {
     videoContainer.appendChild(subtitleContainer);
   }
 
+  // Apply current visibility state
+  subtitleContainer.style.display = subtitlesVisible ? 'block' : 'none';
+
   if (intervalId) cancelAnimationFrame(intervalId);
 
   function updateSubtitles() {
-    if (!subtitles.length || !video) return;
+    if (!subtitles.length || !video || !subtitlesVisible) {
+      if (subtitleContainer) subtitleContainer.innerHTML = '';
+      intervalId = requestAnimationFrame(updateSubtitles);
+      return;
+    }
+    
     const currentTime = Math.floor(video.currentTime * 1000) + delay;
     const line = subtitles.find(s => currentTime >= s.start && currentTime <= s.end);
     subtitleContainer.innerHTML = line ? line.text : '';
@@ -263,11 +641,29 @@ function updateSubtitleStyles() {
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "LOAD_SUBTITLES") {
     console.log("Raw subtitle content:", msg.data.substring(0, 200));
-    const subtitles = parseSRT(msg.data);
-    console.log("Parsed subtitles:", subtitles.slice(0, 5));
+    const parsedSubtitles = parseSRT(msg.data);
+    console.log("Parsed subtitles:", parsedSubtitles.slice(0, 5));
+    
+    // Add to loaded languages array
+    const languageName = msg.filename ? 
+      msg.filename.replace(/\.[^/.]+$/, "") : // Remove file extension
+      `Language ${loadedLanguages.length + 1}`;
+    
+    loadedLanguages.push({
+      name: languageName,
+      subtitles: parsedSubtitles,
+      filename: msg.filename
+    });
+    
+    // Set current subtitles to the newly loaded ones
+    subtitles = parsedSubtitles;
+    currentLanguageIndex = loadedLanguages.length - 1;
     
     const video = document.querySelector('video');
     if (video) displaySubtitles(video);
+    
+    // Show notification
+    showNotification(`Loaded: ${languageName}`, 'success');
   }
   
   if (msg.type === "SET_DELAY") {
@@ -298,6 +694,29 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     customCSS = msg.css || '';
     updateSubtitleStyles();
     console.log('Custom CSS applied:', customCSS);
+  }
+  
+  if (msg.type === "TOGGLE_SHORTCUTS") {
+    shortcutsEnabled = msg.enabled;
+    chrome.storage.local.set({ shortcutsEnabled: shortcutsEnabled });
+    showNotification(
+      shortcutsEnabled ? 'Shortcuts: ENABLED' : 'Shortcuts: DISABLED',
+      shortcutsEnabled ? 'success' : 'warning'
+    );
+  }
+  
+  if (msg.type === "UPDATE_SHORTCUTS") {
+    currentShortcuts = { ...DEFAULT_SHORTCUTS, ...msg.shortcuts };
+    chrome.storage.local.set({ keyboardShortcuts: currentShortcuts });
+    showNotification('Shortcuts updated', 'success');
+  }
+  
+  if (msg.type === "SHOW_SHORTCUTS_HELP") {
+    showShortcutsHelp();
+  }
+  
+  if (msg.type === "TEST_SHORTCUTS") {
+    showNotification('🧪 Shortcuts are working! Try pressing C, G, H, S keys', 'info');
   }
 });
 
@@ -331,10 +750,28 @@ new MutationObserver(() => {
 chrome.storage.local.get([
   'fontSize', 'textColor', 'backgroundColor', 'backgroundOpacity',
   'fontFamily', 'position', 'verticalOffset', 'horizontalOffset',
-  'textAlign', 'shadowColor', 'shadowBlur', 'customCSS'
+  'textAlign', 'shadowColor', 'shadowBlur', 'customCSS',
+  'subtitlesVisible', 'keyboardShortcuts', 'shortcutsEnabled', 'delay'
 ], function(result) {
   Object.assign(subtitleSettings, result);
+  
   if (result.customCSS) {
     customCSS = result.customCSS;
+  }
+  
+  if (typeof result.subtitlesVisible !== 'undefined') {
+    subtitlesVisible = result.subtitlesVisible;
+  }
+  
+  if (result.keyboardShortcuts) {
+    currentShortcuts = { ...DEFAULT_SHORTCUTS, ...result.keyboardShortcuts };
+  }
+  
+  if (typeof result.shortcutsEnabled !== 'undefined') {
+    shortcutsEnabled = result.shortcutsEnabled;
+  }
+  
+  if (typeof result.delay !== 'undefined') {
+    delay = result.delay;
   }
 });
