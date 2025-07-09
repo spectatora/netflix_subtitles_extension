@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Custom Subtitles for Netflix",
+  "version": "1.0",
+  "permissions": [
+    "scripting",
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.netflix.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.netflix.com/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
+}
