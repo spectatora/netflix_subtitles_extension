@@ -1,7 +1,40 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8">
     <style>
+      :root {
+        /* Light theme variables */
+        --bg-primary: #f5f5f5;
+        --bg-secondary: #ffffff;
+        --bg-tertiary: #fafafa;
+        --text-primary: #333333;
+        --text-secondary: #666666;
+        --text-muted: #999999;
+        --border-color: #dddddd;
+        --border-hover: #cccccc;
+        --accent-color: #e50914;
+        --accent-hover: #b8070f;
+        --input-bg: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+      }
+      
+      [data-theme="dark"] {
+        /* Dark theme variables */
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2d2d2d;
+        --bg-tertiary: #1f1f1f;
+        --text-primary: #ffffff;
+        --text-secondary: #cccccc;
+        --text-muted: #888888;
+        --border-color: #404040;
+        --border-hover: #555555;
+        --accent-color: #e50914;
+        --accent-hover: #ff1e2d;
+        --input-bg: #2d2d2d;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+      }
+      
       * {
         box-sizing: border-box;
         margin: 0;
@@ -10,23 +43,50 @@
       
       body { 
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        width: 320px;
-        background: #f5f5f5;
-        color: #333;
+        width: 350px;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
       }
       
       .header {
-        background: #e50914;
+        background: var(--accent-color);
         color: white;
         padding: 12px 16px;
         font-weight: 600;
         font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .theme-toggle {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      
+      .theme-toggle #themeIcon {
+        font-size: 14px;
+        font-weight: bold;
       }
       
       .tabs {
         display: flex;
-        background: #fff;
-        border-bottom: 1px solid #ddd;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
       }
       
       .tab {
@@ -36,23 +96,24 @@
         border: none;
         cursor: pointer;
         font-size: 12px;
-        color: #666;
+        color: var(--text-secondary);
         transition: all 0.2s;
       }
       
       .tab.active {
-        background: #e50914;
+        background: var(--accent-color);
         color: white;
       }
       
       .tab:hover:not(.active) {
-        background: #f0f0f0;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
       }
       
       .tab-content {
         padding: 16px;
-        background: white;
-        max-height: 400px;
+        background: var(--bg-secondary);
+        max-height: 450px;
         overflow-y: auto;
       }
       
@@ -67,7 +128,7 @@
       .setting-group {
         margin-bottom: 16px;
         padding-bottom: 16px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-color);
       }
       
       .setting-group:last-child {
@@ -80,7 +141,7 @@
         font-weight: 500;
         margin-bottom: 6px;
         font-size: 13px;
-        color: #333;
+        color: var(--text-primary);
       }
       
       .input-row {
@@ -93,17 +154,18 @@
       .color-input {
         width: 40px;
         height: 30px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color);
         border-radius: 4px;
         cursor: pointer;
         padding: 0;
+        background: var(--input-bg);
       }
       
       .range-input {
         flex: 1;
         height: 6px;
         border-radius: 3px;
-        background: #ddd;
+        background: var(--border-color);
         outline: none;
         -webkit-appearance: none;
       }
@@ -113,18 +175,20 @@
         width: 16px;
         height: 16px;
         border-radius: 50%;
-        background: #e50914;
+        background: var(--accent-color);
         cursor: pointer;
         border: 2px solid white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 4px var(--shadow-color);
       }
       
       .text-input, .select-input {
         padding: 6px 8px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border-color);
         border-radius: 4px;
         font-size: 13px;
         width: 80px;
+        background: var(--input-bg);
+        color: var(--text-primary);
       }
       
       .select-input {
@@ -134,25 +198,27 @@
       .file-input {
         width: 100%;
         padding: 8px;
-        border: 2px dashed #ddd;
+        border: 2px dashed var(--border-color);
         border-radius: 6px;
         text-align: center;
         cursor: pointer;
         transition: all 0.2s;
-        background: #fafafa;
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
       }
       
       .file-input:hover {
-        border-color: #e50914;
-        background: #fff;
+        border-color: var(--accent-color);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
       }
       
       .current-file {
         font-size: 11px;
-        color: #666;
+        color: var(--text-secondary);
         margin-top: 6px;
         padding: 4px 8px;
-        background: #f0f0f0;
+        background: var(--bg-tertiary);
         border-radius: 3px;
         word-break: break-all;
       }
@@ -160,7 +226,7 @@
       .value-display {
         min-width: 45px;
         font-size: 11px;
-        color: #666;
+        color: var(--text-secondary);
         text-align: right;
       }
       
@@ -173,22 +239,24 @@
       
       .position-btn {
         padding: 8px 4px;
-        border: 1px solid #ddd;
-        background: white;
+        border: 1px solid var(--border-color);
+        background: var(--bg-secondary);
         border-radius: 4px;
         cursor: pointer;
         font-size: 11px;
         transition: all 0.2s;
+        color: var(--text-primary);
       }
       
       .position-btn.active {
-        background: #e50914;
+        background: var(--accent-color);
         color: white;
-        border-color: #e50914;
+        border-color: var(--accent-color);
       }
       
       .position-btn:hover:not(.active) {
-        background: #f0f0f0;
+        background: var(--bg-tertiary);
+        border-color: var(--border-hover);
       }
       
       .preview-area {
@@ -201,6 +269,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        border: 1px solid var(--border-color);
       }
       
       .preview-text {
@@ -209,17 +278,95 @@
         text-align: center;
         font-family: Arial, sans-serif;
       }
+      
+      .genre-presets {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      
+      .preset-btn {
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-tertiary);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 11px;
+        transition: all 0.2s;
+        color: var(--text-primary);
+        text-align: center;
+      }
+      
+      .preset-btn:hover {
+        background: var(--accent-color);
+        color: white;
+        border-color: var(--accent-color);
+      }
+      
+      .preset-btn.active {
+        background: var(--accent-color);
+        color: white;
+        border-color: var(--accent-color);
+      }
+      
+      .custom-css-area {
+        margin-top: 12px;
+      }
+      
+      .css-textarea {
+        width: 100%;
+        height: 80px;
+        padding: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: var(--input-bg);
+        color: var(--text-primary);
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        resize: vertical;
+      }
+      
+      .apply-btn {
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 11px;
+        margin-top: 6px;
+        transition: all 0.2s;
+      }
+      
+      .apply-btn:hover {
+        background: var(--accent-hover);
+      }
+      
+      .section-header {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid var(--border-color);
+      }
     </style>
   </head>
   <body>
     <div class="header">
-      Netflix Custom Subtitles
+      <span>Netflix Custom Subtitles</span>
+             <button class="theme-toggle" id="themeToggle">
+         <span id="themeIcon">●</span>
+         <span id="themeText">Dark</span>
+       </button>
     </div>
     
     <div class="tabs">
       <button class="tab active" data-tab="files">Files</button>
       <button class="tab" data-tab="style">Style</button>
       <button class="tab" data-tab="position">Position</button>
+      <button class="tab" data-tab="advanced">Advanced</button>
     </div>
     
     <div class="tab-content">
@@ -236,7 +383,7 @@
           <div class="input-row">
             <span style="font-size: 12px;">Delay:</span>
             <input type="number" id="delayInput" class="text-input" value="0" step="100" placeholder="0">
-            <span style="font-size: 11px; color: #666;">ms</span>
+            <span style="font-size: 11px; color: var(--text-muted);">ms</span>
           </div>
         </div>
       </div>
@@ -244,7 +391,21 @@
       <!-- Style Tab -->
       <div class="tab-panel" id="style-panel">
         <div class="setting-group">
-          <label class="setting-label">Text Appearance</label>
+          <div class="section-header">Genre Presets</div>
+                     <div class="genre-presets">
+             <button class="preset-btn" data-preset="horror"><span style="color: #ff6600;">●</span> Horror</button>
+             <button class="preset-btn" data-preset="comedy"><span style="color: #ffcc00;">●</span> Comedy</button>
+             <button class="preset-btn" data-preset="drama"><span style="color: #8B4513;">●</span> Drama</button>
+             <button class="preset-btn" data-preset="action"><span style="color: #ff0000;">●</span> Action</button>
+             <button class="preset-btn" data-preset="scifi"><span style="color: #00ff00;">●</span> Sci-Fi</button>
+             <button class="preset-btn" data-preset="documentary"><span style="color: #4169E1;">●</span> Documentary</button>
+             <button class="preset-btn" data-preset="romance"><span style="color: #ff69b4;">●</span> Romance</button>
+             <button class="preset-btn" data-preset="custom"><span style="color: #666;">●</span> Custom</button>
+           </div>
+        </div>
+        
+        <div class="setting-group">
+          <div class="section-header">Text Appearance</div>
           <div class="input-row">
             <span style="font-size: 12px;">Color:</span>
             <input type="color" id="textColor" class="color-input" value="#ffffff">
@@ -259,12 +420,15 @@
               <option value="Times New Roman">Times</option>
               <option value="Roboto">Roboto</option>
               <option value="Georgia">Georgia</option>
+              <option value="Comic Sans MS">Comic Sans</option>
+              <option value="Courier New">Courier</option>
+              <option value="Impact">Impact</option>
             </select>
           </div>
         </div>
         
         <div class="setting-group">
-          <label class="setting-label">Background</label>
+          <div class="section-header">Background</div>
           <div class="input-row">
             <span style="font-size: 12px;">Color:</span>
             <input type="color" id="backgroundColor" class="color-input" value="#000000">
@@ -275,7 +439,7 @@
         </div>
         
         <div class="setting-group">
-          <label class="setting-label">Text Effects</label>
+          <div class="section-header">Text Effects</div>
           <div class="input-row">
             <span style="font-size: 12px;">Shadow:</span>
             <input type="color" id="shadowColor" class="color-input" value="#000000">
@@ -293,7 +457,7 @@
       <!-- Position Tab -->
       <div class="tab-panel" id="position-panel">
         <div class="setting-group">
-          <label class="setting-label">Screen Position</label>
+          <div class="section-header">Screen Position</div>
           <div class="position-grid">
             <button class="position-btn" data-position="top-left">↖ Top Left</button>
             <button class="position-btn" data-position="top-center">↑ Top Center</button>
@@ -308,7 +472,7 @@
         </div>
         
         <div class="setting-group">
-          <label class="setting-label">Fine Positioning</label>
+          <div class="section-header">Fine Positioning</div>
           <div class="input-row">
             <span style="font-size: 12px;">Vertical:</span>
             <input type="range" id="verticalOffset" class="range-input" min="0" max="40" value="10" step="1">
@@ -322,12 +486,35 @@
         </div>
         
         <div class="setting-group">
-          <label class="setting-label">Text Alignment</label>
+          <div class="section-header">Text Alignment</div>
           <div class="position-grid" style="grid-template-columns: 1fr 1fr 1fr;">
             <button class="position-btn active" data-align="center" id="alignCenter">Center</button>
             <button class="position-btn" data-align="left" id="alignLeft">Left</button>
             <button class="position-btn" data-align="right" id="alignRight">Right</button>
           </div>
+        </div>
+      </div>
+      
+      <!-- Advanced Tab -->
+      <div class="tab-panel" id="advanced-panel">
+        <div class="setting-group">
+          <div class="section-header">Custom CSS</div>
+          <textarea id="customCSS" class="css-textarea" placeholder="Enter custom CSS styles...&#10;Example:&#10;text-transform: uppercase;&#10;letter-spacing: 2px;&#10;border: 2px solid red;"></textarea>
+          <button class="apply-btn" id="applyCSSBtn">Apply Custom CSS</button>
+        </div>
+        
+        <div class="setting-group">
+          <div class="section-header">Export/Import</div>
+                     <div class="input-row">
+             <button class="apply-btn" id="exportSettings">↗ Export</button>
+             <input type="file" id="importSettings" accept=".json" style="display: none;">
+             <button class="apply-btn" id="importBtn">↙ Import</button>
+           </div>
+        </div>
+        
+        <div class="setting-group">
+          <div class="section-header">Reset</div>
+                     <button class="apply-btn" id="resetSettings" style="background: #dc3545;">↻ Reset All Settings</button>
         </div>
       </div>
     </div>

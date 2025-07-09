@@ -12,17 +12,142 @@ const DEFAULT_SETTINGS = {
   textAlign: 'center',
   shadowColor: '#000000',
   shadowBlur: 2,
-  filename: null
+  filename: null,
+  theme: 'light',
+  currentPreset: 'custom',
+  customCSS: ''
+};
+
+// Genre presets with predefined configurations
+const GENRE_PRESETS = {
+  horror: {
+    textColor: '#8B0000',
+    backgroundColor: '#1a0000',
+    backgroundOpacity: 85,
+    fontFamily: 'Georgia',
+    fontSize: 36,
+    shadowColor: '#FF0000',
+    shadowBlur: 6,
+    position: 'bottom-center',
+    verticalOffset: 15,
+    textAlign: 'center'
+  },
+  comedy: {
+    textColor: '#FFD700',
+    backgroundColor: '#FF6347',
+    backgroundOpacity: 60,
+    fontFamily: 'Comic Sans MS',
+    fontSize: 34,
+    shadowColor: '#000000',
+    shadowBlur: 3,
+    position: 'center',
+    verticalOffset: 10,
+    textAlign: 'center'
+  },
+  drama: {
+    textColor: '#F5F5DC',
+    backgroundColor: '#2F2F2F',
+    backgroundOpacity: 75,
+    fontFamily: 'Georgia',
+    fontSize: 32,
+    shadowColor: '#000000',
+    shadowBlur: 2,
+    position: 'bottom-center',
+    verticalOffset: 12,
+    textAlign: 'center'
+  },
+  action: {
+    textColor: '#00FFFF',
+    backgroundColor: '#000000',
+    backgroundOpacity: 80,
+    fontFamily: 'Impact',
+    fontSize: 38,
+    shadowColor: '#FF0000',
+    shadowBlur: 4,
+    position: 'bottom-center',
+    verticalOffset: 8,
+    textAlign: 'center'
+  },
+  scifi: {
+    textColor: '#00FF41',
+    backgroundColor: '#001100',
+    backgroundOpacity: 85,
+    fontFamily: 'Courier New',
+    fontSize: 30,
+    shadowColor: '#00FF41',
+    shadowBlur: 8,
+    position: 'bottom-center',
+    verticalOffset: 10,
+    textAlign: 'center'
+  },
+  documentary: {
+    textColor: '#FFFFFF',
+    backgroundColor: '#000000',
+    backgroundOpacity: 70,
+    fontFamily: 'Arial',
+    fontSize: 28,
+    shadowColor: '#000000',
+    shadowBlur: 1,
+    position: 'bottom-center',
+    verticalOffset: 10,
+    textAlign: 'center'
+  },
+  romance: {
+    textColor: '#FFB6C1',
+    backgroundColor: '#4B0026',
+    backgroundOpacity: 70,
+    fontFamily: 'Times New Roman',
+    fontSize: 32,
+    shadowColor: '#8B0000',
+    shadowBlur: 3,
+    position: 'bottom-center',
+    verticalOffset: 15,
+    textAlign: 'center'
+  }
 };
 
 let currentSettings = { ...DEFAULT_SETTINGS };
+let activePreset = 'custom';
 
 document.addEventListener('DOMContentLoaded', function() {
   initializeTabs();
+  initializeTheme();
   loadSettings();
   initializeEventListeners();
   updatePreview();
 });
+
+// Theme functionality
+function initializeTheme() {
+  const savedTheme = localStorage.getItem('subtitles-theme') || 'light';
+  applyTheme(savedTheme);
+}
+
+function applyTheme(theme) {
+  currentSettings.theme = theme;
+  document.body.setAttribute('data-theme', theme);
+  
+  const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');
+  
+  if (theme === 'dark') {
+    themeIcon.textContent = '○';
+    themeIcon.style.color = '#ffd700';
+    themeText.textContent = 'Light';
+  } else {
+    themeIcon.textContent = '●';
+    themeIcon.style.color = '#4169E1';
+    themeText.textContent = 'Dark';
+  }
+  
+  localStorage.setItem('subtitles-theme', theme);
+}
+
+function toggleTheme() {
+  const currentTheme = document.body.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  applyTheme(newTheme);
+}
 
 // Tab functionality
 function initializeTabs() {
@@ -48,8 +173,10 @@ function initializeTabs() {
 function loadSettings() {
   chrome.storage.local.get(Object.keys(DEFAULT_SETTINGS), function(result) {
     currentSettings = { ...DEFAULT_SETTINGS, ...result };
+    activePreset = currentSettings.currentPreset || 'custom';
     updateUIFromSettings();
     updatePreview();
+    updateActivePreset();
   });
 }
 
@@ -90,10 +217,16 @@ function updateUIFromSettings() {
   document.querySelectorAll('.position-btn[data-align]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.align === currentSettings.textAlign);
   });
+  
+  // Advanced tab
+  document.getElementById('customCSS').value = currentSettings.customCSS || '';
 }
 
 // Initialize all event listeners
 function initializeEventListeners() {
+  // Theme toggle
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  
   // Files tab listeners
   document.getElementById('subtitleFile').addEventListener('change', handleFileChange);
   document.getElementById('delayInput').addEventListener('change', handleDelayChange);
@@ -110,6 +243,11 @@ function initializeEventListeners() {
   document.getElementById('shadowBlur').addEventListener('input', handleShadowBlurInput);
   document.getElementById('shadowBlur').addEventListener('change', handleStyleChange);
   
+  // Genre preset listeners
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', handlePresetClick);
+  });
+  
   // Position tab listeners
   document.getElementById('verticalOffset').addEventListener('input', handleVerticalInput);
   document.getElementById('verticalOffset').addEventListener('change', handlePositionChange);
@@ -124,6 +262,46 @@ function initializeEventListeners() {
   // Alignment buttons
   document.querySelectorAll('.position-btn[data-align]').forEach(btn => {
     btn.addEventListener('click', handleAlignmentButtonClick);
+  });
+  
+  // Advanced tab listeners
+  document.getElementById('applyCSSBtn').addEventListener('click', handleApplyCustomCSS);
+  document.getElementById('exportSettings').addEventListener('click', handleExportSettings);
+  document.getElementById('importBtn').addEventListener('click', () => {
+    document.getElementById('importSettings').click();
+  });
+  document.getElementById('importSettings').addEventListener('change', handleImportSettings);
+  document.getElementById('resetSettings').addEventListener('click', handleResetSettings);
+}
+
+// Genre preset functionality
+function handlePresetClick(event) {
+  const presetName = event.target.dataset.preset;
+  
+  if (presetName === 'custom') {
+    activePreset = 'custom';
+    updateActivePreset();
+    return;
+  }
+  
+  if (GENRE_PRESETS[presetName]) {
+    // Apply preset settings
+    Object.assign(currentSettings, GENRE_PRESETS[presetName]);
+    currentSettings.currentPreset = presetName;
+    activePreset = presetName;
+    
+    updateUIFromSettings();
+    updateActivePreset();
+    saveSettings();
+    updatePreview();
+    sendMessageToContentScript({ type: "UPDATE_STYLE", settings: currentSettings });
+    sendMessageToContentScript({ type: "UPDATE_POSITION", settings: currentSettings });
+  }
+}
+
+function updateActivePreset() {
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.preset === activePreset);
   });
 }
 
@@ -163,6 +341,9 @@ function handleDelayChange(event) {
 
 function handleStyleChange() {
   updateSettingsFromUI();
+  activePreset = 'custom';
+  currentSettings.currentPreset = 'custom';
+  updateActivePreset();
   saveSettings();
   updatePreview();
   sendMessageToContentScript({ type: "UPDATE_STYLE", settings: currentSettings });
@@ -185,6 +366,9 @@ function handleShadowBlurInput(event) {
 
 function handlePositionChange() {
   updateSettingsFromUI();
+  activePreset = 'custom';
+  currentSettings.currentPreset = 'custom';
+  updateActivePreset();
   saveSettings();
   sendMessageToContentScript({ type: "UPDATE_POSITION", settings: currentSettings });
 }
@@ -200,6 +384,9 @@ function handleHorizontalInput(event) {
 function handlePositionButtonClick(event) {
   const position = event.target.dataset.position;
   currentSettings.position = position;
+  activePreset = 'custom';
+  currentSettings.currentPreset = 'custom';
+  updateActivePreset();
   
   document.querySelectorAll('.position-btn[data-position]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.position === position);
@@ -212,6 +399,9 @@ function handlePositionButtonClick(event) {
 function handleAlignmentButtonClick(event) {
   const alignment = event.target.dataset.align;
   currentSettings.textAlign = alignment;
+  activePreset = 'custom';
+  currentSettings.currentPreset = 'custom';
+  updateActivePreset();
   
   document.querySelectorAll('.position-btn[data-align]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.align === alignment);
@@ -220,6 +410,85 @@ function handleAlignmentButtonClick(event) {
   saveSettings();
   updatePreview();
   sendMessageToContentScript({ type: "UPDATE_STYLE", settings: currentSettings });
+}
+
+// Advanced functionality
+function handleApplyCustomCSS() {
+  const customCSS = document.getElementById('customCSS').value;
+  currentSettings.customCSS = customCSS;
+  activePreset = 'custom';
+  currentSettings.currentPreset = 'custom';
+  updateActivePreset();
+  saveSettings();
+  sendMessageToContentScript({ type: "APPLY_CUSTOM_CSS", css: customCSS });
+}
+
+function handleExportSettings() {
+  const dataStr = JSON.stringify(currentSettings, null, 2);
+  const dataBlob = new Blob([dataStr], {type: 'application/json'});
+  const url = URL.createObjectURL(dataBlob);
+  
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'netflix-subtitles-settings.json';
+  link.click();
+  
+  URL.revokeObjectURL(url);
+}
+
+function handleImportSettings(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedSettings = JSON.parse(e.target.result);
+      
+      // Validate and merge settings
+      currentSettings = { ...DEFAULT_SETTINGS, ...importedSettings };
+      activePreset = currentSettings.currentPreset || 'custom';
+      
+      updateUIFromSettings();
+      updateActivePreset();
+      updatePreview();
+      saveSettings();
+      
+      // Apply to content script
+      sendMessageToContentScript({ type: "UPDATE_STYLE", settings: currentSettings });
+      sendMessageToContentScript({ type: "UPDATE_POSITION", settings: currentSettings });
+      if (currentSettings.customCSS) {
+        sendMessageToContentScript({ type: "APPLY_CUSTOM_CSS", css: currentSettings.customCSS });
+      }
+      
+      alert('Settings imported successfully!');
+    } catch (error) {
+      alert('Error importing settings: Invalid file format');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function handleResetSettings() {
+  if (confirm('Are you sure you want to reset all settings to default?')) {
+    currentSettings = { ...DEFAULT_SETTINGS };
+    activePreset = 'custom';
+    
+    updateUIFromSettings();
+    updateActivePreset();
+    updatePreview();
+    saveSettings();
+    
+    // Clear storage
+    chrome.storage.local.clear();
+    
+    // Reset content script
+    sendMessageToContentScript({ type: "UPDATE_STYLE", settings: currentSettings });
+    sendMessageToContentScript({ type: "UPDATE_POSITION", settings: currentSettings });
+    sendMessageToContentScript({ type: "APPLY_CUSTOM_CSS", css: '' });
+    
+    alert('All settings have been reset to default!');
+  }
 }
 
 // Update settings from UI
@@ -251,6 +520,22 @@ function updatePreview() {
   previewText.style.padding = bgOpacity > 0 ? '4px 8px' : '0';
   previewText.style.borderRadius = bgOpacity > 0 ? '4px' : '0';
   previewText.style.textShadow = `${currentSettings.shadowBlur}px ${currentSettings.shadowBlur}px ${currentSettings.shadowBlur}px ${currentSettings.shadowColor}`;
+  
+  // Update preview text based on active preset
+  if (activePreset !== 'custom') {
+    const presetNames = {
+      horror: 'Scary subtitle text...',
+      comedy: 'Funny subtitle text!',
+      drama: 'Emotional subtitle text.',
+      action: 'EXPLOSIVE SUBTITLE!',
+      scifi: 'Futuristic subtitle text',
+      documentary: 'Educational subtitle text',
+      romance: 'Romantic subtitle text ♥'
+    };
+    previewText.textContent = presetNames[activePreset] || 'Sample subtitle text';
+  } else {
+    previewText.textContent = 'Sample subtitle text';
+  }
 }
 
 // Helper functions

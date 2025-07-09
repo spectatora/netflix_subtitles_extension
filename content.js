@@ -2,6 +2,7 @@ let subtitles = [];
 let delay = 0;
 let subtitleContainer = null;
 let intervalId = null;
+let customCSS = '';
 
 // Default styling settings - will be updated from popup
 let subtitleSettings = {
@@ -83,6 +84,7 @@ function displaySubtitles(video) {
 
 function createSubtitleContainer() {
   const container = document.createElement('div');
+  container.className = 'netflix-custom-subtitles';
   applySubtitleStyles(container);
   return container;
 }
@@ -102,6 +104,9 @@ function applySubtitleStyles(container) {
   
   // Apply text styles
   applyTextStyles(container);
+  
+  // Apply custom CSS if exists
+  applyCustomCSS(container);
 }
 
 function applyPositioning(container) {
@@ -211,6 +216,36 @@ function applyTextStyles(container) {
   }
 }
 
+function applyCustomCSS(container) {
+  if (!customCSS.trim()) return;
+  
+  try {
+    // Create a temporary style element to parse and validate CSS
+    const tempStyle = document.createElement('div');
+    tempStyle.style.cssText = customCSS;
+    
+    // Apply each style property individually
+    const styles = customCSS.split(';').filter(style => style.trim());
+    
+    styles.forEach(style => {
+      const [property, value] = style.split(':').map(s => s.trim());
+      if (property && value) {
+        // Convert kebab-case to camelCase for JavaScript style properties
+        const camelProperty = property.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+        
+        // Apply the style if it's a valid CSS property
+        try {
+          container.style[camelProperty] = value;
+        } catch (e) {
+          console.warn(`Invalid CSS property: ${property}:${value}`);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error applying custom CSS:', error);
+  }
+}
+
 function hexToRgba(hex, alpha) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -257,6 +292,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     subtitleSettings.horizontalOffset = msg.settings.horizontalOffset;
     updateSubtitleStyles();
   }
+  
+  if (msg.type === "APPLY_CUSTOM_CSS") {
+    // Update custom CSS and reapply styles
+    customCSS = msg.css || '';
+    updateSubtitleStyles();
+    console.log('Custom CSS applied:', customCSS);
+  }
 });
 
 function cleanup() {
@@ -270,6 +312,7 @@ function cleanup() {
   delay = 0;
   subtitleContainer = null;
   intervalId = null;
+  customCSS = '';
 }
 
 // Enhanced cleanup for navigation
@@ -288,7 +331,10 @@ new MutationObserver(() => {
 chrome.storage.local.get([
   'fontSize', 'textColor', 'backgroundColor', 'backgroundOpacity',
   'fontFamily', 'position', 'verticalOffset', 'horizontalOffset',
-  'textAlign', 'shadowColor', 'shadowBlur'
+  'textAlign', 'shadowColor', 'shadowBlur', 'customCSS'
 ], function(result) {
   Object.assign(subtitleSettings, result);
+  if (result.customCSS) {
+    customCSS = result.customCSS;
+  }
 });

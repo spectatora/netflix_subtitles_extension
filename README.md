@@ -8,13 +8,31 @@ A Chrome extension that allows you to load and display custom subtitle files (.s
 
 ## ✨ Features
 
-- 📁 **Load Custom Subtitles** - Support for .srt subtitle files
-- ⏱️ **Timing Control** - Adjust subtitle delay/sync in real-time
-- 🔤 **Font Customization** - Variable font size (12px - 72px)
-- 🌍 **Encoding Support** - Automatic detection of Windows-1251 and UTF-8 encoding
-- 🎯 **Smart Positioning** - Automatic overlay positioning on Netflix player
-- 💾 **Persistent Settings** - Remembers your preferences across sessions
-- 🚀 **Real-time Updates** - Instant application of timing and font changes
+### 📁 **Subtitle Management**
+- **Load Custom Subtitles** - Support for .srt subtitle files
+- **Encoding Support** - Automatic detection of Windows-1251 and UTF-8 encoding
+- **Timing Control** - Adjust subtitle delay/sync in real-time
+- **Real-time Updates** - Instant application of all changes
+
+### 🎨 **Visual Customization**
+- **Theme Switcher** - Light/Dark mode for the popup interface
+- **Genre Presets** - Pre-configured styles for Horror, Comedy, Drama, Action, Sci-Fi, Documentary, Romance
+- **Text Styling** - Custom colors, 7 font families, variable font size (12px-72px)
+- **Background Control** - Customizable background color and opacity (0-100%)
+- **Text Effects** - Adjustable shadow color and blur intensity
+- **Live Preview** - Real-time preview of all styling changes
+
+### 📍 **Advanced Positioning**
+- **9 Position Presets** - Top/Center/Bottom × Left/Center/Right positioning
+- **Fine-tuning** - Precise vertical and horizontal offset controls
+- **Text Alignment** - Left, center, or right text alignment
+
+### ⚡ **Professional Features**
+- **Custom CSS** - Advanced styling with custom CSS support
+- **Export/Import** - Save and share your subtitle configurations
+- **Settings Reset** - One-click reset to default settings
+- **Persistent Settings** - Remembers all preferences across sessions
+- **Smart Navigation** - Handles Netflix's single-page application navigation
 
 ## 🚀 Installation
 
@@ -47,25 +65,52 @@ A Chrome extension that allows you to load and display custom subtitle files (.s
 
 ## 📖 Usage
 
-### Loading Subtitles
+### Getting Started
 
 1. **Navigate to Netflix** and start playing any video
 2. **Click the extension icon** in your Chrome toolbar
 3. **Select a subtitle file** using the file picker (.srt format)
 4. **Subtitles will automatically appear** on the video
 
-### Adjusting Settings
+### Interface Overview
 
-#### Timing Control
-- Use the **Delay (ms)** input to sync subtitles with audio
-- Positive values delay subtitles
-- Negative values advance subtitles
-- Changes apply instantly
+The extension features a modern tabbed interface with four main sections:
 
-#### Font Size
-- Use the **Font Size** slider (12px - 72px)
-- Real-time preview of size changes
-- Optimized for readability at all sizes
+#### 📁 **Files Tab**
+- **Upload Subtitles**: Select .srt files from your device
+- **Timing Sync**: Adjust delay in milliseconds for perfect audio sync
+- **File Status**: View currently loaded subtitle file
+
+#### 🎨 **Style Tab**
+- **Genre Presets**: One-click styling for different movie genres:
+  - 🎃 **Horror**: Dark red text with spooky shadows
+  - 😄 **Comedy**: Bright yellow text with playful fonts
+  - 🎭 **Drama**: Elegant cream text with subtle styling
+  - 💥 **Action**: Cyan text with intense effects
+  - 🚀 **Sci-Fi**: Green matrix-style text with glow
+  - 📚 **Documentary**: Clean, professional white text
+  - 💕 **Romance**: Pink text with romantic styling
+- **Text Appearance**: Customize color, size (12px-72px), and font family
+- **Background**: Control background color and opacity (0-100%)
+- **Text Effects**: Adjust shadow color and blur intensity
+- **Live Preview**: See your changes in real-time
+
+#### 📍 **Position Tab**
+- **Screen Position**: Choose from 9 preset positions
+- **Fine Positioning**: Precise vertical/horizontal offset controls
+- **Text Alignment**: Left, center, or right alignment
+
+#### ⚙️ **Advanced Tab**
+- **Custom CSS**: Add advanced styling with custom CSS code
+- **Export Settings**: Save your configurations as JSON files
+- **Import Settings**: Load previously saved configurations
+- **Reset**: Return all settings to defaults
+
+### Theme Switching
+
+Toggle between light and dark themes using the button in the header:
+- 🌙 **Dark Mode**: Better for nighttime viewing
+- ☀️ **Light Mode**: Clean, bright interface
 
 ### Example SRT Format
 ```srt
@@ -83,17 +128,28 @@ This is the second subtitle line.
 ### Supported Formats
 - **Subtitle Files**: .srt (SubRip Subtitle)
 - **Encoding**: UTF-8, Windows-1251 (Cyrillic)
-- **Browsers**: Chrome 88+, Edge 88+
+- **Browsers**: Chrome 88+, Edge 88+, Chromium-based browsers
+- **Themes**: Light/Dark mode with CSS custom properties
+- **Export Format**: JSON configuration files
+
+### Advanced Features
+- **CSS Variables**: Dynamic theming system
+- **Genre Presets**: 7 predefined styling configurations
+- **Custom CSS**: Advanced styling with CSS injection
+- **Settings Management**: Export/Import with JSON validation
+- **Real-time Preview**: Live subtitle styling preview
+- **Position Matrix**: 9-point positioning system with fine-tuning
 
 ### Permissions Required
 - `scripting` - Inject subtitle display scripts
-- `storage` - Save user preferences
+- `storage` - Save user preferences and settings
 - `activeTab` - Access current Netflix tab
 - `host_permissions` - Netflix domain access
 
 ### Manifest Version
 - Uses **Manifest V3** (latest Chrome extension standard)
 - Content Security Policy compliant
+- Enhanced message passing for real-time updates
 
 ## 📁 Project Structure
 
@@ -110,10 +166,19 @@ netflix_subtitles_extension/
 ### File Descriptions
 
 - **`manifest.json`** - Extension metadata and permissions
-- **`content.js`** - Handles subtitle parsing, display, and timing
-- **`popup.html`** - User interface for file selection and settings
-- **`popup.js`** - Manages popup interactions and Chrome API calls
+- **`content.js`** - Subtitle parsing, display, positioning, and custom CSS injection
+- **`popup.html`** - Modern tabbed interface with theming and advanced controls
+- **`popup.js`** - Complete settings management, genre presets, and theme switching
 - **`icon.png`** - Extension icon (16x16, 48x48, 128x128)
+
+### Code Architecture
+
+- **Theme System**: CSS custom properties for light/dark mode switching
+- **Genre Presets**: Predefined configurations for different movie types
+- **Message Passing**: Enhanced communication between popup and content script
+- **Settings Storage**: Comprehensive preference management with export/import
+- **Custom CSS Engine**: Safe CSS injection with property validation
+- **Position Engine**: 9-point positioning matrix with offset fine-tuning
 
 ## 🔧 Development
 
