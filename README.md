@@ -26,7 +26,7 @@ A Chrome extension that allows you to load and display custom subtitle files (.s
 
 1. **Download the Extension**
    ```bash
-   git clone https://github.com/yourusername/netflix_subtitles_extension.git
+   git clone https://github.com/spectatora/netflix_subtitles_extension.git
    # or download as ZIP and extract
    ```
 
