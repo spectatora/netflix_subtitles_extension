@@ -1,0 +1,74 @@
+# Site settings
+title: "Netflix Custom Subtitles Extension"
+description: "Load custom .srt subtitles on Netflix with advanced timing, styling, and positioning controls. Keyboard shortcuts supported."
+baseurl: "/netflix_subtitles_extension"
+url: "https://spectatora.github.io"
+
+# SEO and social
+author: "spectatora"
+twitter:
+  username: spectatora
+  card: summary_large_image
+
+# GitHub metadata
+repository: "spectatora/netflix_subtitles_extension"
+
+# Theme
+theme: jekyll-theme-cayman
+remote_theme: pages-themes/cayman@v0.2.0
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Custom variables
+extension:
+  version: "1.0"
+  chrome_store_url: "#"
+  download_url: "https://github.com/spectatora/netflix_subtitles_extension/releases"
+
+# Collections for documentation
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: "_docs"
+      type: "docs"
+    values:
+      layout: "doc"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter: rouge
+  input: GFM
+
+# Exclude from processing
+exclude:
+  - content.js
+  - popup.js
+  - popup.html
+  - manifest.json
+  - "*.zip"
+  - node_modules
+  - Gemfile
+  - Gemfile.lock
+  - "*.md"
+
+# Include only what's needed for the site
+include:
+  - _pages
+  - assets
+  - chrome-store-assets 

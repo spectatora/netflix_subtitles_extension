@@ -1,0 +1,41 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archive files
+*.zip
+*.rar
+*.7z
+
+# Jekyll
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+vendor/
+Gemfile.lock
+
+# Node modules (if using npm)
+node_modules/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Build artifacts
+dist/
+build/ 
