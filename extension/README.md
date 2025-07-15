@@ -10,7 +10,6 @@ extension/
 ├── content.js                      # Main extension logic  
 ├── popup.html                      # Extension popup interface
 ├── popup.js                        # Popup functionality
-├── netflix-subtitles-extension.zip # Ready-to-install package
 ├── icons/                          # Extension icons
 │   ├── icon-16.png
 │   ├── icon-48.png
@@ -29,23 +28,20 @@ extension/
 
 ## 🚀 Installation
 
-### Option 1: Ready-to-Install Package (Recommended)
-1. Download `netflix-subtitles-extension.zip`
-2. Extract the files to a folder
+### Option 1: From GitHub Repository (Recommended)
+1. Download this repository:
+   - Click "Code" → "Download ZIP" on the main GitHub page
+   - Or clone: `git clone https://github.com/spectatora/netflix_subtitles_extension.git`
+2. Extract the files (if downloaded as ZIP)
 3. Open Chrome and navigate to `chrome://extensions/`
 4. Enable "Developer mode" (toggle in top-right corner)
-5. Click "Load unpacked" and select the extracted folder
+5. Click "Load unpacked" and select the `extension/` folder
 6. The extension icon will appear in your Chrome toolbar
 
-### Option 2: From Source Code
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/spectatora/netflix_subtitles_extension.git
-   ```
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable "Developer mode"
-4. Click "Load unpacked" and select the `extension/` directory
-5. The extension will be loaded and ready to use
+### Option 2: Chrome Web Store (Coming Soon)
+The extension is currently under review for the Chrome Web Store. Once approved, you'll be able to install it with a single click.
+
+For detailed installation instructions with screenshots, visit our [Installation Guide](https://spectatora.github.io/netflix_subtitles_extension/installation-guide/).
 
 ## 💻 Development
 
