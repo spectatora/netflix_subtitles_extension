@@ -411,10 +411,8 @@ function parseSRT(srtText) {
       return { start, end, text };
     }).filter(sub => sub !== null);
     
-    console.log(`Parsed ${subtitles.length} valid subtitles`);
     return subtitles;
   } catch (err) {
-    console.error('Failed to parse SRT:', err);
     return [];
   }
 }
@@ -620,7 +618,7 @@ function applyCustomCSS(container) {
       }
     });
   } catch (error) {
-    console.error('Error applying custom CSS:', error);
+    // Error applying custom CSS
   }
 }
 
@@ -640,9 +638,7 @@ function updateSubtitleStyles() {
 // Message handlers
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "LOAD_SUBTITLES") {
-    console.log("Raw subtitle content:", msg.data.substring(0, 200));
     const parsedSubtitles = parseSRT(msg.data);
-    console.log("Parsed subtitles:", parsedSubtitles.slice(0, 5));
     
     // Add to loaded languages array
     const languageName = msg.filename ? 
@@ -693,7 +689,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     // Update custom CSS and reapply styles
     customCSS = msg.css || '';
     updateSubtitleStyles();
-    console.log('Custom CSS applied:', customCSS);
   }
   
   if (msg.type === "TOGGLE_SHORTCUTS") {

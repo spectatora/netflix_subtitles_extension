@@ -397,7 +397,7 @@ function handleFileChange(event) {
     try {
       content = new TextDecoder('windows-1251').decode(buffer);
     } catch (err) {
-      console.error('Decoding error:', err);
+      // Decoding error
       content = new TextDecoder('utf-8').decode(buffer);
     }
     
