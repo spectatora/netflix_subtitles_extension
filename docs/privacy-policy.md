@@ -5,8 +5,6 @@ description: Privacy Policy for Netflix Custom Subtitles Extension - Learn how w
 permalink: /privacy-policy/
 ---
 
-{% include navigation.html %}
-
 <div class="page-header">
   <div class="container">
     <h1>🔒 Privacy Policy</h1>
@@ -272,8 +270,6 @@ permalink: /privacy-policy/
 
   </div>
 </section>
-
-{% include footer.html %}
 
 <style>
 body {

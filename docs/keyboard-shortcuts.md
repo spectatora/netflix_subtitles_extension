@@ -5,8 +5,6 @@ description: Master Netflix Custom Subtitles with powerful keyboard shortcuts fo
 permalink: /keyboard-shortcuts/
 ---
 
-{% include navigation.html %}
-
 <div class="page-header">
   <div class="container">
     <h1>⌨️ Keyboard Shortcuts</h1>
@@ -205,8 +203,6 @@ permalink: /keyboard-shortcuts/
 
   </div>
 </section>
-
-{% include footer.html %}
 
 <style>
 body {
