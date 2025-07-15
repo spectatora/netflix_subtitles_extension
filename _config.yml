@@ -13,9 +13,12 @@ twitter:
 # GitHub metadata
 repository: "spectatora/netflix_subtitles_extension"
 
-# Theme
-theme: jekyll-theme-cayman
-remote_theme: pages-themes/cayman@v0.2.0
+# Build settings - using custom layouts instead of remote theme
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter: rouge
+  input: GFM
 
 # Plugins
 plugins:
@@ -48,13 +51,6 @@ defaults:
     values:
       layout: "doc"
 
-# Build settings
-markdown: kramdown
-highlighter: rouge
-kramdown:
-  syntax_highlighter: rouge
-  input: GFM
-
 # Exclude from processing
 exclude:
   - content.js
@@ -65,7 +61,8 @@ exclude:
   - node_modules
   - Gemfile
   - Gemfile.lock
-  - "*.md"
+  - vendor
+  - README.md
 
 # Include only what's needed for the site
 include:
