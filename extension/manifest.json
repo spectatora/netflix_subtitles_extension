@@ -1,10 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Custom Subtitles for Netflix",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "Load and display custom subtitle files (.srt) on Netflix videos with advanced timing and formatting controls.",
   "permissions": [
-    "scripting",
     "storage",
     "activeTab"
   ],

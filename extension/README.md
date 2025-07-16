@@ -94,7 +94,6 @@ For detailed installation instructions with screenshots, visit our [Installation
 ## 🛠️ Technical Details
 
 ### Permissions Required
-- **`scripting`** - Inject subtitle display scripts into Netflix pages
 - **`storage`** - Save user preferences and settings locally
 - **`activeTab`** - Access the current Netflix tab
 - **`host_permissions`** - Limited access to Netflix.com domains
