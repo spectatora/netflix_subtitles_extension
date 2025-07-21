@@ -1,14 +1,14 @@
 ---
 layout: default
 title: Installation Guide
-description: Step-by-step guide to install Netflix Custom Subtitles Extension using Chrome's Load Unpacked feature.
+description: How to install Netflix Custom Subtitles Extension from Chrome Web Store in just 30 seconds.
 permalink: /installation-guide/
 ---
 
 <div class="page-header">
   <div class="container">
-    <h1>📥 Installation Guide</h1>
-    <p class="page-subtitle">How to install Netflix Custom Subtitles Extension manually</p>
+    <h1>🏪 Installation Guide</h1>
+    <p class="page-subtitle">Install Netflix Custom Subtitles Extension from Chrome Web Store</p>
   </div>
 </div>
 
@@ -16,37 +16,37 @@ permalink: /installation-guide/
   <div class="container">
     
     <div class="status-notice">
-      <div class="notice-card">
-        <h2>🔄 Chrome Web Store Status</h2>
-        <p>Our extension is currently under review for the Chrome Web Store. In the meantime, you can install it manually using the steps below.</p>
+      <div class="notice-card success">
+        <h2>✅ Now Available on Chrome Web Store!</h2>
+        <p>Our extension is officially published and available for immediate installation from Google's Chrome Web Store.</p>
+        <a href="https://chromewebstore.google.com/detail/custom-subtitles-for-netf/ofehckldejnjgjjaehfmbbjfgngidhac" class="btn btn-primary" target="_blank">
+          🏪 Install Now - It's Free!
+        </a>
       </div>
     </div>
 
     <div class="installation-steps">
-      <h2>🚀 Manual Installation Steps</h2>
+      <h2>🚀 Simple Installation Steps</h2>
       
       <div class="step-card">
         <div class="step-number">1</div>
         <div class="step-content">
-          <h3>Download the Extension Files</h3>
-          <p>Download the extension source code from GitHub:</p>
-          <div class="download-options">
-            <a href="https://github.com/spectatora/netflix_subtitles_extension/archive/refs/heads/master.zip" class="btn btn-primary">
-              📦 Download ZIP
-            </a>
-            <p class="download-note">Or clone the repository: <code>git clone https://github.com/spectatora/netflix_subtitles_extension.git</code></p>
-          </div>
+          <h3>Open Chrome Web Store</h3>
+          <p>Click the button below to go to our official extension page:</p>
+          <a href="https://chromewebstore.google.com/detail/custom-subtitles-for-netf/ofehckldejnjgjjaehfmbbjfgngidhac" class="btn btn-primary" target="_blank">
+            Open Extension Page
+          </a>
         </div>
       </div>
 
       <div class="step-card">
         <div class="step-number">2</div>
         <div class="step-content">
-          <h3>Extract and Locate Extension Folder</h3>
+          <h3>Add to Chrome</h3>
           <ul>
-            <li>Extract the downloaded ZIP file</li>
-            <li>Navigate to the <strong>extension/</strong> folder inside the extracted directory</li>
-            <li>This folder contains all the extension files (manifest.json, content.js, popup.html, etc.)</li>
+            <li>Click the blue <strong>"Add to Chrome"</strong> button</li>
+            <li>Confirm the installation in the popup dialog</li>
+            <li>The extension will be automatically installed and activated</li>
           </ul>
         </div>
       </div>
@@ -54,64 +54,39 @@ permalink: /installation-guide/
       <div class="step-card">
         <div class="step-number">3</div>
         <div class="step-content">
-          <h3>Open Chrome Extensions Page</h3>
-          <ul>
-            <li>Open Google Chrome</li>
-            <li>Type <code>chrome://extensions/</code> in the address bar and press Enter</li>
-            <li>Or go to Chrome menu → More tools → Extensions</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="step-card">
-        <div class="step-number">4</div>
-        <div class="step-content">
-          <h3>Enable Developer Mode</h3>
-          <ul>
-            <li>Look for the "Developer mode" toggle in the top-right corner</li>
-            <li>Turn it ON (the toggle should be blue)</li>
-            <li>New buttons will appear: "Load unpacked", "Pack extension", "Update"</li>
-          </ul>
-          <div class="screenshot-placeholder">
-            <img src="{{ site.baseurl }}/chrome-store-assets/screenshots/developer-mode.png" alt="Developer Mode Toggle" style="max-width: 100%; border: 1px solid #ddd; border-radius: 8px; margin: 1rem 0;">
-          </div>
-        </div>
-      </div>
-
-      <div class="step-card">
-        <div class="step-number">5</div>
-        <div class="step-content">
-          <h3>Load the Extension</h3>
-          <ul>
-            <li>Click the <strong>"Load unpacked"</strong> button</li>
-            <li>Browse to and select the <strong>extension/</strong> folder you extracted in step 2</li>
-            <li>Click "Select Folder" (Windows) or "Open" (Mac)</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="step-card">
-        <div class="step-number">6</div>
-        <div class="step-content">
-          <h3>Verify Installation</h3>
-          <ul>
-            <li>The extension should now appear in your extensions list</li>
-            <li>Look for the Netflix Custom Subtitles icon in your Chrome toolbar</li>
-            <li>If the icon isn't visible, click the puzzle piece icon and pin the extension</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="step-card">
-        <div class="step-number">7</div>
-        <div class="step-content">
           <h3>Start Using on Netflix</h3>
           <ul>
             <li>Go to <a href="https://netflix.com" target="_blank">Netflix.com</a></li>
             <li>Start playing any video</li>
-            <li>Click the extension icon and load your .srt subtitle file</li>
-            <li>Enjoy custom subtitles with advanced controls!</li>
+            <li>Click the extension icon in your Chrome toolbar</li>
+            <li>Load your .srt subtitle file and enjoy!</li>
           </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefits-section">
+      <h2>✨ Why Install from Chrome Web Store?</h2>
+      
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <h4>🔒 100% Safe & Secure</h4>
+          <p>Verified by Google's security team. No malware, no risks.</p>
+        </div>
+        
+        <div class="benefit-item">
+          <h4>🔄 Automatic Updates</h4>
+          <p>Always get the latest features and security fixes automatically.</p>
+        </div>
+        
+        <div class="benefit-item">
+          <h4>⚡ One-Click Install</h4>
+          <p>Install in 30 seconds with just one click. No technical setup needed.</p>
+        </div>
+        
+        <div class="benefit-item">
+          <h4>🛡️ Google Verified</h4>
+          <p>Officially reviewed and approved by Google's Chrome Web Store team.</p>
         </div>
       </div>
     </div>
@@ -121,38 +96,38 @@ permalink: /installation-guide/
       
       <div class="faq-grid">
         <div class="faq-item">
-          <h4>Extension not loading?</h4>
-          <ul>
-            <li>Make sure you selected the correct "extension/" folder</li>
-            <li>Check that manifest.json is present in the folder</li>
-            <li>Ensure Developer mode is enabled</li>
-          </ul>
-        </div>
-        
-        <div class="faq-item">
-          <h4>Icon not appearing in toolbar?</h4>
+          <h4>Can't find the extension icon?</h4>
           <ul>
             <li>Click the puzzle piece icon in Chrome toolbar</li>
-            <li>Find "Netflix Custom Subtitles" and click the pin icon</li>
-            <li>The extension icon will now be visible</li>
+            <li>Find "Custom Subtitles for Netflix" and click the pin icon</li>
+            <li>The extension icon will now be visible in your toolbar</li>
           </ul>
         </div>
         
         <div class="faq-item">
-          <h4>Extension showing errors?</h4>
-          <ul>
-            <li>Make sure all files are extracted properly</li>
-            <li>Try removing and re-adding the extension</li>
-            <li>Check Chrome console for specific error messages</li>
-          </ul>
-        </div>
-        
-        <div class="faq-item">
-          <h4>Not working on Netflix?</h4>
+          <h4>Extension not working on Netflix?</h4>
           <ul>
             <li>Refresh the Netflix page after installing</li>
             <li>Make sure you're on a video page (not browsing)</li>
-            <li>Check that the extension has permissions for Netflix.com</li>
+            <li>Check that the extension is enabled in Chrome settings</li>
+          </ul>
+        </div>
+        
+        <div class="faq-item">
+          <h4>Need to report a bug?</h4>
+          <ul>
+            <li>Visit our <a href="https://github.com/spectatora/netflix_subtitles_extension/issues" target="_blank">GitHub Issues page</a></li>
+            <li>Provide details about the problem you're experiencing</li>
+            <li>Our team will respond as quickly as possible</li>
+          </ul>
+        </div>
+        
+        <div class="faq-item">
+          <h4>Want to uninstall?</h4>
+          <ul>
+            <li>Right-click the extension icon in Chrome toolbar</li>
+            <li>Select "Remove from Chrome..."</li>
+            <li>Confirm the removal in the dialog</li>
           </ul>
         </div>
       </div>
@@ -170,6 +145,7 @@ permalink: /installation-guide/
         <div class="next-step-card">
           <h4>🎨 Customize Your Experience</h4>
           <p>Try different genre presets and create your own custom subtitle styles.</p>
+          <a href="https://chromewebstore.google.com/detail/custom-subtitles-for-netf/ofehckldejnjgjjaehfmbbjfgngidhac" class="btn btn-primary" target="_blank">Get Started</a>
         </div>
         
         <div class="next-step-card">
@@ -219,16 +195,26 @@ permalink: /installation-guide/
 }
 
 .notice-card {
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
   border-radius: 8px;
   padding: 2rem;
   text-align: center;
 }
 
+.notice-card.success {
+  background: #d4edda;
+  border-color: #c3e6cb;
+}
+
 .notice-card h2 {
-  color: #856404;
+  color: #155724;
   margin-bottom: 1rem;
+}
+
+.notice-card p {
+  color: #155724;
+  margin-bottom: 1.5rem;
 }
 
 .installation-steps h2 {
@@ -245,14 +231,14 @@ permalink: /installation-guide/
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  border-left: 4px solid #e50914;
+  border-left: 4px solid #28a745;
 }
 
 .step-number {
   flex-shrink: 0;
   width: 3rem;
   height: 3rem;
-  background: #e50914;
+  background: #28a745;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -279,14 +265,36 @@ permalink: /installation-guide/
   margin-bottom: 0.5rem;
 }
 
-.download-options {
-  margin: 1rem 0;
+.benefits-section {
+  margin: 4rem 0;
+  background: #f8f9fa;
+  padding: 3rem;
+  border-radius: 12px;
 }
 
-.download-note {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #666;
+.benefits-section h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.benefit-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.benefit-item h4 {
+  color: #28a745;
+  margin-bottom: 1rem;
 }
 
 .btn {
@@ -298,35 +306,28 @@ permalink: /installation-guide/
   transition: all 0.3s ease;
   border: none;
   cursor: pointer;
+  margin: 0.5rem;
 }
 
 .btn-primary {
-  background: #e50914;
+  background: #28a745;
   color: white;
 }
 
 .btn-primary:hover {
-  background: #b8070f;
+  background: #218838;
   transform: translateY(-2px);
 }
 
 .btn-secondary {
   background: transparent;
-  color: #e50914;
-  border: 2px solid #e50914;
+  color: #28a745;
+  border: 2px solid #28a745;
 }
 
 .btn-secondary:hover {
-  background: #e50914;
+  background: #28a745;
   color: white;
-}
-
-code {
-  background: #f8f9fa;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.9rem;
 }
 
 .troubleshooting {
@@ -356,7 +357,7 @@ code {
 }
 
 .faq-item h4 {
-  color: #e50914;
+  color: #28a745;
   margin-bottom: 1rem;
 }
 

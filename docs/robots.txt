@@ -4,19 +4,8 @@ Allow: /
 # Sitemap
 Sitemap: https://spectatora.github.io/netflix_subtitles_extension/sitemap.xml
 
-# Allow all CSS and JS files
-Allow: /assets/
-Allow: /chrome-store-assets/
-
-# Disallow potentially sensitive files
-Disallow: /manifest.json
-Disallow: /content.js
-Disallow: /popup.js
-Disallow: /popup.html
-Disallow: /*.zip$
-
-# Allow important pages
-Allow: /
-Allow: /keyboard-shortcuts/
-Allow: /privacy-policy/
-Allow: /docs/ 
+# Block access to potential problematic paths
+Disallow: /extension/
+Disallow: /netflix-subtitles-v1.0.1/
+Disallow: /*.zip
+Disallow: /*.crx 

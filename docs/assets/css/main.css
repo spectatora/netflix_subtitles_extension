@@ -56,7 +56,8 @@ body {
 }
 
 .hero-badges img {
-  margin-right: 0.5rem;
+  margin: 0 0.25rem;
+  height: 20px;
 }
 
 .hero-actions {
@@ -119,6 +120,18 @@ body {
 .btn-large {
   padding: 16px 32px;
   font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #6c757d;
+}
+
+.btn-outline:hover {
+  background: #6c757d;
+  color: white;
 }
 
 /* Sections */
@@ -245,6 +258,32 @@ section {
   transform: scale(1.02);
 }
 
+.install-card.featured {
+  position: relative;
+  border: 2px solid #28a745;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.featured-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #28a745;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.install-card.secondary {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
 .recommended-badge {
   position: absolute;
   top: -10px;
@@ -291,6 +330,28 @@ section {
   font-size: 0.9rem;
   color: #666;
   margin: 1rem 0;
+}
+
+.store-description {
+  font-size: 1.1rem;
+  color: #28a745;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.store-features {
+  margin: 1.5rem 0;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+}
+
+.features-list li {
+  padding: 0.5rem 0;
+  color: #155724;
+  font-weight: 500;
 }
 
 .quick-note {
@@ -392,7 +453,32 @@ section {
   flex-wrap: wrap;
 }
 
-/* Responsive */
+.dev-links {
+  margin: 1rem 0;
+}
+
+.dev-links .btn {
+  margin: 0.25rem;
+}
+
+.dev-note {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-top: 1rem;
+  }
+  
+  .installation-note {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(40, 167, 69, 0.1);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    border-radius: 8px;
+    color: #155724;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+  
+  /* Responsive */
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
@@ -409,5 +495,20 @@ section {
   .usage-steps,
   .use-cases {
     grid-template-columns: 1fr;
+  }
+
+  .installation-note {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+  
+  .featured-badge {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .btn-large {
+    padding: 14px 24px;
+    font-size: 1rem;
   }
 } 

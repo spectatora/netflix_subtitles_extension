@@ -46,8 +46,11 @@
     "@type": "Person",
     "name": "{{ site.author }}"
   },
-  "downloadUrl": "{{ site.extension.download_url }}",
-  "screenshot": "{{ site.url }}{{ site.baseurl }}/chrome-store-assets/screenshots/netflix_custom_subtitles_main-screen.png"
+  "url": "{{ site.extension.chrome_store_url }}",
+  "installUrl": "{{ site.extension.chrome_store_url }}",
+  "screenshot": "{{ site.url }}{{ site.baseurl }}/chrome-store-assets/screenshots/netflix_custom_subtitles_main-screen.png",
+  "applicationSuite": "Chrome Web Store",
+  "softwareVersion": "{{ site.extension.version }}"
 }
 </script>
 

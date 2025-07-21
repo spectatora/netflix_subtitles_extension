@@ -28,9 +28,9 @@ plugins:
 
 # Custom variables
 extension:
-  version: "1.0"
-  chrome_store_url: "#"
-  download_url: "https://github.com/spectatora/netflix_subtitles_extension/releases"
+  version: "1.0.1"
+  chrome_store_url: "https://chromewebstore.google.com/detail/custom-subtitles-for-netf/ofehckldejnjgjjaehfmbbjfgngidhac"
+  github_url: "https://github.com/spectatora/netflix_subtitles_extension"
 
 # Collections for documentation
 collections:
